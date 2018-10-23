@@ -1,90 +1,76 @@
 package com.like.livedatabus
 
 import android.arch.lifecycle.LifecycleOwner
+import android.arch.lifecycle.Observer
 import android.os.Looper
 import android.util.Log
 
-class EventManager {
+object EventManager {
     private val eventList = mutableListOf<Event<*>>()
 
-    fun <T> observe(event: Event<T>) {
+    fun <T> observe(owner: LifecycleOwner, tag1: String, tag2: String, isSticky: Boolean, observer: Observer<T>) {
+        val event = Event(owner, tag1, tag2, observer)
         if (eventList.contains(event)) {
             Log.e(LiveDataBus.TAG, "已经订阅过事件：$event")
             return
         }
+        var liveData = getLiveData<T>(tag1, tag2, isSticky)
+        if (liveData == null) {
+            liveData = BusLiveData()
+        }
+        event.liveData = liveData
         event.observe()
         eventList.add(event)
+        Log.i(LiveDataBus.TAG, "订阅事件成功：$event，事件总数：${getEventCount()}，宿主总数：${getOwnerCount()}")
     }
 
-    fun isRegisteredHost(host: LifecycleOwner): Boolean {
-        val result = eventList.any { it.host == host }
+    fun isRegistered(owner: LifecycleOwner): Boolean {
+        val result = eventList.any { it.owner == owner }
         if (result) {
-            Log.e(LiveDataBus.TAG, "已经注册过宿主：$host")
+            Log.e(LiveDataBus.TAG, "已经注册过宿主：$owner")
         }
         return result
     }
 
-    fun <T> postSticky(tag1: String, t: T) {
-        postActual(tag1, "", t, true)
-    }
-
-    fun <T> postSticky(tag1: String, tag2: String, t: T) {
-        postActual(tag1, tag2, t, true)
-    }
-
-    fun <T> post(tag1: String, t: T) {
-        postActual(tag1, "", t, false)
-    }
-
-    fun <T> post(tag1: String, tag2: String, t: T) {
-        postActual(tag1, tag2, t, false)
-    }
-
-    private fun <T> postActual(tag1: String, tag2: String, t: T, isSticky: Boolean) {
-        val liveData = getLiveDataIfNullCreate<T>(tag1, tag2, isSticky)
-        if (Looper.getMainLooper() == Looper.myLooper()) {
-            liveData.setValue(t)
-        } else {
-            liveData.postValue(t)
-        }
-    }
-
-    fun remove(host: LifecycleOwner) {
-        eventList.listIterator().apply {
-            this.forEach {
-                if (it.host == host) {
-                    this.remove()
-                }
+    fun <T> post(tag1: String, tag2: String, t: T, isSticky: Boolean) {
+        val liveData = getLiveData<T>(tag1, tag2, isSticky)
+        if (liveData != null) {
+            if (Looper.getMainLooper() == Looper.myLooper()) {
+                liveData.setValue(t)
+            } else {
+                liveData.postValue(t)
             }
+            Log.d(LiveDataBus.TAG, "发送了消息 --> tag1=$tag1，tag2=$tag2，内容=$t")
+        } else {
+            Log.d(LiveDataBus.TAG, "发送消息失败，没有订阅事件： --> tag1=$tag1，tag2=$tag2")
         }
+    }
+
+    fun remove(owner: LifecycleOwner) {
+        eventList.removeAll { it.owner == owner }
+        Log.i(LiveDataBus.TAG, "取消宿主：$owner，剩余宿主总数：${getOwnerCount()}")
     }
 
     /**
      * LiveData由tag1、tag2组合决定
      */
-    private fun <T> getLiveDataIfNullCreate(tag1: String, tag2: String, isSticky: Boolean): BusMutableLiveData<T> {
+    private fun <T> getLiveData(tag1: String, tag2: String, isSticky: Boolean): BusLiveData<T>? {
         val filter = eventList.filter {
             it.tag1 == tag1 && it.tag2 == tag2
         }
         return if (filter.isNotEmpty()) {
-            filter[0].liveData
+            val liveData = filter[0].liveData
+            liveData!!.mNeedCurrentDataWhenFirstObserve = isSticky
+            liveData as BusLiveData<T>
         } else {
-            BusMutableLiveData()
-        }.let {
-            (it as BusMutableLiveData<T>).mNeedCurrentDataWhenFirstObserve = isSticky
+            null
         }
     }
 
     /**
      * 注册的宿主总数
      */
-    private fun getHostCount(): Int {
-        val result = mutableSetOf<LifecycleOwner>()
-        eventList.forEach {
-            result.add(it.host)
-        }
-        return result.size
-    }
+    private fun getOwnerCount(): Int = eventList.distinctBy { it.owner }.size
 
     /**
      * 注册的事件总数

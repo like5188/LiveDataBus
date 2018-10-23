@@ -1,36 +1,30 @@
 package com.like.livedatabus
 
-class LiveDataBus private constructor() {
-    companion object {
-        val TAG = LiveDataBus::class.java.simpleName
+import android.arch.lifecycle.LifecycleOwner
 
-        fun <T> with(tag: String): BusMutableLiveData<T> = Holder.instance.with(tag, false)
+object LiveDataBus {
+    val TAG = LiveDataBus::class.java.simpleName
+    private val mBridge = Bridge()
 
-        // 兼容java
-        @JvmStatic
-        fun <T> with(tag: String, clazz: Class<T>): BusMutableLiveData<T> = Holder.instance.with(tag, false)
-
-        fun <T> withSticky(tag: String): BusMutableLiveData<T> = Holder.instance.with(tag, true)
-
-        // 兼容java
-        @JvmStatic
-        fun <T> withSticky(tag: String, clazz: Class<T>): BusMutableLiveData<T> = Holder.instance.with(tag, true)
-    }
-
-    private object Holder {
-        val instance = LiveDataBus()
-    }
-
-    private val bus = mutableMapOf<String, BusMutableLiveData<Any>>()
-
-    private fun <T> with(tag: String, isSticky: Boolean): BusMutableLiveData<T> {
-        if (!bus.containsKey(tag)) {
-            bus[tag] = BusMutableLiveData()
-        }
-        return bus[tag]!!.let {
-            it.mNeedCurrentDataWhenFirstObserve = isSticky
-            it as BusMutableLiveData<T>
+    fun register(owner: LifecycleOwner) {
+        if (!EventManager.isRegistered(owner)) {
+            mBridge.register(owner)
         }
     }
 
+    fun <T> post(tag1: String, t: T) {
+        EventManager.post(tag1, "", t, false)
+    }
+
+    fun <T> post(tag1: String, tag2: String, t: T) {
+        EventManager.post(tag1, tag2, t, false)
+    }
+
+    fun <T> postSticky(tag1: String, t: T) {
+        EventManager.post(tag1, "", t, true)
+    }
+
+    fun <T> postSticky(tag1: String, tag2: String, t: T) {
+        EventManager.post(tag1, tag2, t, true)
+    }
 }
