@@ -5,12 +5,28 @@ import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.Observer
 
-/**
- * 解决退出界面重新打开，然后使用observe或者observeForever方法注册时，由于LiveDataBus中的LiveData未销毁，导致会接收到之前的数据的bug。
- */
-internal class BusMutableLiveData<T> : MutableLiveData<T>() {
+class BusMutableLiveData<T> : MutableLiveData<T>() {
     private val observerMap = mutableMapOf<Observer<T>, Observer<T>>()
 
+    /**
+     * 如果注册时，希望接收到LiveData中已经存在的最新数据。
+     * 生命周期感知，不需要手动取消订阅
+     */
+    fun observeSticky(owner: LifecycleOwner, observer: Observer<T>) {
+        super.observe(owner, observer)
+    }
+
+    /**
+     * 如果注册时，希望接收到LiveData中已经存在的最新数据。
+     * 需要手动取消订阅
+     */
+    fun observeForeverSticky(observer: Observer<T>) {
+        super.observeForever(observer)
+    }
+
+    /**
+     * 生命周期感知，不需要手动取消订阅
+     */
     override fun observe(owner: LifecycleOwner, observer: Observer<T>) {
         super.observe(owner, observer)
         try {
@@ -20,6 +36,9 @@ internal class BusMutableLiveData<T> : MutableLiveData<T>() {
         }
     }
 
+    /**
+     * 需要手动取消订阅
+     */
     override fun observeForever(observer: Observer<T>) {
         if (!observerMap.containsKey(observer)) {
             observerMap[observer] = BusObserverWrapper(observer)
@@ -38,9 +57,9 @@ internal class BusMutableLiveData<T> : MutableLiveData<T>() {
     }
 
     /**
-     * 使用observe方法注册时。
+     * 使用observe方法注册时，会接收到LiveData中已经存在的最新数据。
      *
-     * 把ObserverWrapper的版本号设置成mLastVersion和mVersion一样。
+     * 解决办法：把ObserverWrapper的版本号设置成mLastVersion和mVersion一样。
      */
     @Throws(Exception::class)
     private fun hook(observer: Observer<T>) {

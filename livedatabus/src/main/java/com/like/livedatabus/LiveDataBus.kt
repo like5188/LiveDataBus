@@ -1,7 +1,5 @@
 package com.like.livedatabus
 
-import android.arch.lifecycle.MutableLiveData
-
 class LiveDataBus private constructor() {
     companion object {
         @JvmStatic
@@ -16,14 +14,14 @@ class LiveDataBus private constructor() {
 
     private val bus = mutableMapOf<String, BusMutableLiveData<Any>>()
 
-    fun <T> with(tag: String, type: Class<T>): MutableLiveData<T> {
+    fun <T> with(tag: String, type: Class<T>): BusMutableLiveData<T> {
         if (!bus.containsKey(tag)) {
             bus[tag] = BusMutableLiveData()
         }
-        return bus[tag] as MutableLiveData<T>
+        return bus[tag] as BusMutableLiveData<T>
     }
 
-    fun with(tag: String): MutableLiveData<Any> {
+    fun with(tag: String): BusMutableLiveData<Any> {
         return with(tag, Any::class.java)
     }
 }
