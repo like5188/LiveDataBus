@@ -2,6 +2,8 @@ package com.like.livedatabus
 
 class LiveDataBus private constructor() {
     companion object {
+        val TAG = LiveDataBus::class.java.simpleName
+
         fun <T> with(tag: String): BusMutableLiveData<T> = Holder.instance.with(tag, false)
 
         // 兼容java
