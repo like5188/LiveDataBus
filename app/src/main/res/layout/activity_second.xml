@@ -44,11 +44,6 @@
             android:hint="显示数据2"
             android:padding="10dp" />
 
-        <Button
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:onClick="startActivity2"
-            android:text="启动界面2" />
     </LinearLayout>
 
 </layout>

@@ -2,10 +2,17 @@ package com.like.livedatabus
 
 class LiveDataBus private constructor() {
     companion object {
+        fun <T> with(tag: String): BusMutableLiveData<T> = Holder.instance.with(tag, false)
+
+        // 兼容java
         @JvmStatic
-        fun get(): LiveDataBus {
-            return Holder.instance
-        }
+        fun <T> with(tag: String, clazz: Class<T>): BusMutableLiveData<T> = Holder.instance.with(tag, false)
+
+        fun <T> withSticky(tag: String): BusMutableLiveData<T> = Holder.instance.with(tag, true)
+
+        // 兼容java
+        @JvmStatic
+        fun <T> withSticky(tag: String, clazz: Class<T>): BusMutableLiveData<T> = Holder.instance.with(tag, true)
     }
 
     private object Holder {
@@ -14,14 +21,14 @@ class LiveDataBus private constructor() {
 
     private val bus = mutableMapOf<String, BusMutableLiveData<Any>>()
 
-    fun <T> with(tag: String, type: Class<T>): BusMutableLiveData<T> {
+    private fun <T> with(tag: String, isSticky: Boolean): BusMutableLiveData<T> {
         if (!bus.containsKey(tag)) {
             bus[tag] = BusMutableLiveData()
         }
-        return bus[tag] as BusMutableLiveData<T>
+        return bus[tag]!!.let {
+            it.mNeedCurrentDataWhenFirstObserve = isSticky
+            it as BusMutableLiveData<T>
+        }
     }
 
-    fun with(tag: String): BusMutableLiveData<Any> {
-        return with(tag, Any::class.java)
-    }
 }
