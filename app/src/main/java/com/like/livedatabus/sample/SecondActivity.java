@@ -21,7 +21,7 @@ public class SecondActivity extends AppCompatActivity {
     }
 
     public void register1(View view) {
-        LiveDataBus.with("like1", Integer.class).observe(this, new Observer<Integer>() {
+        LiveDataBus.withSticky("like1", Integer.class).observe(this, new Observer<Integer>() {
             @Override
             public void onChanged(@Nullable Integer integer) {
                 Log.e("LiveDataBus", "SecondActivity onChanged");
