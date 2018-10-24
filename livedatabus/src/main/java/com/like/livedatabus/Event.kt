@@ -7,7 +7,7 @@ class Event<T>(
         val owner: LifecycleOwner,
         val tag1: String,
         val tag2: String,
-        val observer: Observer<T>
+        private val observer: Observer<T>
 ) {
     var liveData: BusLiveData<T>? = null
 

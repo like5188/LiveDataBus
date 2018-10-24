@@ -9,13 +9,9 @@ import java.lang.Exception
  * 连接LiveDataBus和自动生成的代码的桥梁
  */
 open class Bridge {
-    fun <T> observe(owner: LifecycleOwner, tag1: String, tag2: String, isSticky: Boolean, observer: Observer<T>) {
-        if (tag1.isEmpty()) {
-            return
-        }
-        EventManager.observe(owner, tag1, tag2, isSticky, observer)
-    }
-
+    /**
+     * 注册宿主及其父类
+     */
     fun register(owner: LifecycleOwner) {
         try {
             registerAllHierarchyFromOwner(owner, owner.javaClass)
@@ -58,5 +54,15 @@ open class Bridge {
      * 自动生成代码时重写此方法，方法体是对entity中所有注册的tag进行observe()方法的调用
      */
     protected open fun autoGenerate(owner: LifecycleOwner) {
+    }
+
+    /**
+     * 在代理类中重写autoGenerate方法，然后调用observe方法进行注册
+     */
+    protected fun <T> observe(owner: LifecycleOwner, tag1: String, tag2: String, isSticky: Boolean, observer: Observer<T>) {
+        if (tag1.isEmpty()) {
+            return
+        }
+        EventManager.observe(owner, tag1, tag2, isSticky, observer)
     }
 }
