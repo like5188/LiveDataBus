@@ -2,6 +2,7 @@ package com.like.livedatabus_compiler
 
 import com.like.livedatabus_annotations.BusObserver
 import com.squareup.javapoet.*
+import java.io.IOException
 import javax.lang.model.element.Element
 import javax.lang.model.element.ExecutableElement
 import javax.lang.model.element.Modifier
@@ -26,6 +27,7 @@ class ClassCodeGenerator {
         // 因为java工程中没有下面这些类(Android中的类)，所以只能采用ClassName的方式。
         private val BRIDGE = ClassName.get("com.like.livedatabus", "Bridge")
         private val OBSERVER = ClassName.get("android.arch.lifecycle", "Observer")
+        private val LIFECYCLE_OWNER = ClassName.get("android.arch.lifecycle", "LifecycleOwner")
     }
 
     private var mPackageName = ""// 生成的类的包名
@@ -40,6 +42,13 @@ class ClassCodeGenerator {
         val javaFile = JavaFile.builder(mPackageName, createClass())
                 .addFileComment(" This codes are generated automatically by LiveDataBus. Do not modify!")// 类的注释
                 .build()
+
+        try {
+            javaFile.writeTo(ProcessUtils.filer)
+        } catch (e: IOException) {
+            e.printStackTrace()
+        }
+
     }
 
     /**
@@ -50,6 +59,7 @@ class ClassCodeGenerator {
             TypeSpec.classBuilder(mOwnerClassName?.simpleName() + CLASS_UNIFORM_MARK)
                     .addModifiers(Modifier.PUBLIC, Modifier.FINAL)
                     .superclass(BRIDGE)
+                    .addMethod(createMethod())
                     .build()
 
     /**
@@ -60,7 +70,7 @@ class ClassCodeGenerator {
     private fun createMethod(): MethodSpec {
         val builder = MethodSpec.methodBuilder("autoGenerate")
                 .addModifiers(Modifier.PUBLIC)
-                .addParameter(mOwnerClassName, "owner", Modifier.FINAL)
+                .addParameter(LIFECYCLE_OWNER, "owner", Modifier.FINAL)
                 .addAnnotation(Override::class.java)
         for (binder in mMethodInfoList) {
             builder.addCode(createMethodCodeBlock(binder))
@@ -91,7 +101,7 @@ class ClassCodeGenerator {
     new Observer<String>() {
     @Override
     public void onChanged(@Nullable String s) {
-    // 调用@BusObserver注解的接收数据的方法
+    // 调用@BusObserver注解的接收数据的方法((MainActivity) owner).observer1(t);
     }
     }
      */
@@ -112,8 +122,8 @@ class ClassCodeGenerator {
                 .addAnnotation(Override::class.java)
                 .addModifiers(Modifier.PUBLIC)
         methodBuilder.addParameter(typeName, "t")
-        // 调用@BusObserver注解的接收数据的方法
-        methodBuilder.addStatement("owner." + methodInfo.methodName + "(t)")
+        // ((MainActivity) owner).observer1(t);
+        methodBuilder.addStatement("((MainActivity) owner)." + methodInfo.methodName + "(t)")
         // 创建匿名内部类
         return TypeSpec.anonymousClassBuilder("")
                 .addSuperinterface(ParameterizedTypeName.get(OBSERVER, typeName))
