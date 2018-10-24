@@ -22,17 +22,15 @@ class MainActivity : AppCompatActivity() {
     }
 
     @BusObserver(["like1"])
-    fun observer1(int: Int) {
-        Log.e("LiveDataBus", "MainActivity onChanged")
-        mBinding.tv1.text = int.toString()
+    fun observer1(i: Int) {
+        Log.e("LiveDataBus", "MainActivity onChanged tag1=like1")
+        mBinding.tv1.text = i.toString()
     }
 
-    fun register1(view: View) {
-//        LiveDataBus.with<Int>("like1")
-//                .observe(this, Observer<Int> {
-//                    Log.e("LiveDataBus", "MainActivity onChanged")
-//                    mBinding.tv1.text = it.toString()
-//                })
+    @BusObserver(["like2"])
+    fun observer2(s: String) {
+        Log.e("LiveDataBus", "MainActivity onChanged tag1=like2")
+        mBinding.tv2.text = s
     }
 
     fun changeData1(view: View) {
@@ -42,18 +40,11 @@ class MainActivity : AppCompatActivity() {
         LiveDataBus.post("like1", newValue)
     }
 
-    fun register2(view: View) {
-//        LiveDataBus.with<Int>("like2")
-//                .observe(this, Observer<Int> {
-//                    mBinding.tv2.text = it.toString()
-//                })
-    }
-
     fun changeData2(view: View) {
-//        val text = mBinding.tv2.text.toString()
-//        val oldValue = if (text.isEmpty()) 0 else text.toInt()
-//        val newValue = oldValue + 1
-//        LiveDataBus.with<Int>("like2").setValue(newValue)
+        val text = mBinding.tv2.text.toString()
+        val oldValue = if (text.isEmpty()) 0 else text.toInt()
+        val newValue = oldValue + 1
+        LiveDataBus.post("like2", newValue)
     }
 
     fun startActivity2(view: View) {

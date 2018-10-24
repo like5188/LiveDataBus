@@ -9,20 +9,8 @@
         <Button
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:onClick="register1"
-            android:text="注册1" />
-
-        <Button
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
             android:onClick="changeData1"
             android:text="改变数据1" />
-
-        <Button
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:onClick="register2"
-            android:text="注册2" />
 
         <Button
             android:layout_width="match_parent"

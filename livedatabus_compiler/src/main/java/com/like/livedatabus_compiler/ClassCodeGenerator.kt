@@ -123,7 +123,7 @@ class ClassCodeGenerator {
                 .addModifiers(Modifier.PUBLIC)
         methodBuilder.addParameter(typeName, "t")
         // ((MainActivity) owner).observer1(t);
-        methodBuilder.addStatement("((MainActivity) owner)." + methodInfo.methodName + "(t)")
+        methodBuilder.addStatement("((${mOwnerClassName?.simpleName()}) owner).${methodInfo.methodName}(t)")
         // 创建匿名内部类
         return TypeSpec.anonymousClassBuilder("")
                 .addSuperinterface(ParameterizedTypeName.get(OBSERVER, typeName))
