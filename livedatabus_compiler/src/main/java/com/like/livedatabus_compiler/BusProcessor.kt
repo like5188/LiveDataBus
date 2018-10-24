@@ -11,10 +11,8 @@ import javax.lang.model.element.TypeElement
  */
 @SupportedSourceVersion(SourceVersion.RELEASE_8)
 @SupportedAnnotationTypes("com.like.livedatabus_annotations.BusObserver")
-@SupportedOptions(BusProcessor.KAPT_KOTLIN_GENERATED_OPTION_NAME)
 class BusProcessor : AbstractProcessor() {
     companion object {
-        const val KAPT_KOTLIN_GENERATED_OPTION_NAME = "kapt.kotlin.generated"
         private val CODE_BUILDER_MAP = mutableMapOf<TypeElement, ClassCodeGenerator>()
     }
 
