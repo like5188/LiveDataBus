@@ -34,12 +34,13 @@ object EventManager {
         if (liveData != null) {
             if (Looper.getMainLooper() == Looper.myLooper()) {
                 liveData.setValue(t)
+                Log.d(LiveDataBus.TAG, "在主线程发送了消息 --> tag1=$tag1，tag2=$tag2，内容=$t")
             } else {
                 liveData.postValue(t)
+                Log.d(LiveDataBus.TAG, "在非主线程发送了消息 --> tag1=$tag1，tag2=$tag2，内容=$t")
             }
-            Log.d(LiveDataBus.TAG, "发送了消息 --> tag1=$tag1，tag2=$tag2，内容=$t")
         } else {
-            Log.d(LiveDataBus.TAG, "发送消息失败，没有订阅事件： --> tag1=$tag1，tag2=$tag2")
+            Log.e(LiveDataBus.TAG, "发送消息失败，没有订阅事件： --> tag1=$tag1，tag2=$tag2")
         }
     }
 
