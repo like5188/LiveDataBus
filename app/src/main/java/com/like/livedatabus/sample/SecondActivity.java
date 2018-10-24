@@ -22,20 +22,20 @@ public class SecondActivity extends AppCompatActivity {
     }
 
     public void changeData1(View view) {
-        LiveDataBus.INSTANCE.post("like1", 1000L);
+        LiveDataBus.INSTANCE.post("like1", 100);
     }
 
     public void changeData2(View view) {
         LiveDataBus.INSTANCE.post("like2", new User("name", 18));
     }
 
-    @BusObserver("like1")
-    public void observer1(long l) {
+    @BusObserver(value = "like1", isSticky = true)
+    public void observer1(int i) {
         Log.e("LiveDataBus", "SecondActivity onChanged tag1=like1");
-        mBinding.tv1.setText(String.valueOf(l));
+        mBinding.tv1.setText(String.valueOf(i));
     }
 
-    @BusObserver("like2")
+    @BusObserver(value = "like2")
     public void observer2(User u) {
         Log.e("LiveDataBus", "SecondActivity onChanged tag1=like2");
         mBinding.tv2.setText(u.toString());

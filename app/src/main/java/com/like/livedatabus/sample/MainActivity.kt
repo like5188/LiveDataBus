@@ -3,14 +3,14 @@ package com.like.livedatabus.sample
 import android.content.Intent
 import android.databinding.DataBindingUtil
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.view.View
 import com.like.livedatabus.LiveDataBus
 import com.like.livedatabus.sample.databinding.ActivityMainBinding
 import com.like.livedatabus_annotations.BusObserver
+import kotlin.concurrent.thread
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : BaseActivity() {
     private val mBinding by lazy {
         DataBindingUtil.setContentView<ActivityMainBinding>(this, R.layout.activity_main)
     }
@@ -18,7 +18,6 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         mBinding
-        LiveDataBus.register(this)
     }
 
     @BusObserver(["like1"])
@@ -44,7 +43,9 @@ class MainActivity : AppCompatActivity() {
         val text = mBinding.tv2.text.toString()
         val oldValue = if (text.isEmpty()) 0 else text.toInt()
         val newValue = oldValue + 1
-        LiveDataBus.post("like2", newValue)
+        thread {
+            LiveDataBus.post("like3", newValue)
+        }
     }
 
     fun startActivity2(view: View) {

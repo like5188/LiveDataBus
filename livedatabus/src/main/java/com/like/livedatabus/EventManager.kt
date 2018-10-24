@@ -12,6 +12,7 @@ object EventManager {
         val liveData = getLiveData<T>(tag1, tag2, isSticky) ?: BusLiveData()
         val observerWrapper = BusObserverWrapper(owner, tag1, tag2, observer, liveData)
         val event = Event(owner, tag1, tag2, observerWrapper, liveData)
+        // event由owner、tag1、tag2组合决定
         if (eventList.contains(event)) {
             Log.e(LiveDataBus.TAG, "已经订阅过事件：$event")
             return
@@ -33,11 +34,11 @@ object EventManager {
         val liveData = getLiveData<T>(tag1, tag2, isSticky)
         if (liveData != null) {
             if (Looper.getMainLooper() == Looper.myLooper()) {
+                Log.d(LiveDataBus.TAG, "在主线程发送消息 --> tag1=$tag1，tag2=$tag2，内容=$t")
                 liveData.setValue(t)
-                Log.d(LiveDataBus.TAG, "在主线程发送了消息 --> tag1=$tag1，tag2=$tag2，内容=$t")
             } else {
+                Log.v(LiveDataBus.TAG, "在非主线程发送消息 --> tag1=$tag1，tag2=$tag2，内容=$t")
                 liveData.postValue(t)
-                Log.d(LiveDataBus.TAG, "在非主线程发送了消息 --> tag1=$tag1，tag2=$tag2，内容=$t")
             }
         } else {
             Log.e(LiveDataBus.TAG, "发送消息失败，没有订阅事件： --> tag1=$tag1，tag2=$tag2")
