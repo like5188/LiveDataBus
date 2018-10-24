@@ -18,6 +18,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         mBinding
+        LiveDataBus.register(this)
     }
 
     @BusObserver(["like1"])
@@ -35,10 +36,10 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun changeData1(view: View) {
-//        val text = mBinding.tv1.text.toString()
-//        val oldValue = if (text.isEmpty()) 0 else text.toInt()
-//        val newValue = oldValue + 1
-//        LiveDataBus.with<Int>("like1").setValue(newValue)
+        val text = mBinding.tv1.text.toString()
+        val oldValue = if (text.isEmpty()) 0 else text.toInt()
+        val newValue = oldValue + 1
+        LiveDataBus.post("like1", newValue)
     }
 
     fun register2(view: View) {

@@ -61,8 +61,7 @@ object EventManager {
         return if (filter.isNotEmpty()) {
             val liveData = filter[0].liveData
             liveData!!.mNeedCurrentDataWhenFirstObserve = isSticky
-//         todo   liveData as BusLiveData<T>
-            null
+            liveData as BusLiveData<T>
         } else {
             null
         }
