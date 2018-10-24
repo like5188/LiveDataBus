@@ -8,7 +8,7 @@ import java.lang.Exception
 /**
  * 连接LiveDataBus和自动生成的代码的桥梁
  */
-class Bridge {
+open class Bridge {
     fun <T> observe(owner: LifecycleOwner, tag1: String, tag2: String, isSticky: Boolean, observer: Observer<T>) {
         if (tag1.isEmpty()) {
             return
@@ -57,6 +57,6 @@ class Bridge {
     /**
      * 自动生成代码时重写此方法，方法体是对entity中所有注册的tag进行observe()方法的调用
      */
-    protected fun autoGenerate(owner: LifecycleOwner) {
+    protected open fun autoGenerate(owner: LifecycleOwner) {
     }
 }

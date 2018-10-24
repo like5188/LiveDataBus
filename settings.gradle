@@ -1,1 +1,1 @@
-include ':app', ':livedatabus', ':livedatabus_annotations'
+include ':app', ':livedatabus', ':livedatabus_annotations', ':livedatabus_compiler'
