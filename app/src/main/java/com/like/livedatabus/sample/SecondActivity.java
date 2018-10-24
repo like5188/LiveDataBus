@@ -18,15 +18,15 @@ public class SecondActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mBinding = DataBindingUtil.setContentView(this, R.layout.activity_second);
-        LiveDataBus.INSTANCE.register(this);
+        LiveDataBus.register(this);
     }
 
     public void changeData1(View view) {
-        LiveDataBus.INSTANCE.post("like1", 100);
+        LiveDataBus.post("like1", 100);
     }
 
     public void changeData2(View view) {
-        LiveDataBus.INSTANCE.post("like2", new User("name", 18));
+        LiveDataBus.post("like2", new User("name", 18));
     }
 
     @BusObserver(value = "like1", isSticky = true)

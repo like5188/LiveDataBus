@@ -11,7 +11,7 @@ import javax.lang.model.element.TypeElement
 /**
 public class MainActivity_Proxy extends Bridge {
 @Override
-protected void autoGenerate(@NotNull LifecycleOwner owner) {
+protected void autoGenerate(@NotNull LifecycleOwner owner, @NotNull Object host) {
 observe(owner, tag1, tag2, isSticky, new Observer<String>() {
 @Override
 public void onChanged(@Nullable String s) {
@@ -28,14 +28,15 @@ class ClassCodeGenerator {
         private val BRIDGE = ClassName.get("com.like.livedatabus", "Bridge")
         private val OBSERVER = ClassName.get("android.arch.lifecycle", "Observer")
         private val LIFECYCLE_OWNER = ClassName.get("android.arch.lifecycle", "LifecycleOwner")
+        private val OBJECT = ClassName.get("java.lang", "Object")
     }
 
     private var mPackageName = ""// 生成的类的包名
-    private var mOwnerClassName: ClassName? = null// 宿主的类名
+    private var mHostClassName: ClassName? = null// 宿主的类名
     private val mMethodInfoList = mutableSetOf<MethodInfo>()// 类中的所有方法
 
     fun create() {
-        if (mMethodInfoList.isEmpty() || mPackageName.isEmpty() || mOwnerClassName == null) {
+        if (mMethodInfoList.isEmpty() || mPackageName.isEmpty() || mHostClassName == null) {
             return
         }
         // 创建包名及类的注释
@@ -56,7 +57,7 @@ class ClassCodeGenerator {
      * public class MainActivity_Proxy extends Bridge {}
      */
     private fun createClass(): TypeSpec =
-            TypeSpec.classBuilder(mOwnerClassName?.simpleName() + CLASS_UNIFORM_MARK)
+            TypeSpec.classBuilder(mHostClassName?.simpleName() + CLASS_UNIFORM_MARK)
                     .addModifiers(Modifier.PUBLIC, Modifier.FINAL)
                     .superclass(BRIDGE)
                     .addMethod(createMethod())
@@ -65,12 +66,13 @@ class ClassCodeGenerator {
     /**
      * 创建autoGenerate方法
      * @Override
-     * protected void autoGenerate(@NotNull LifecycleOwner owner) {}
+     * protected void autoGenerate(@NotNull LifecycleOwner owner, @NotNull Object host) {}
      */
     private fun createMethod(): MethodSpec {
         val builder = MethodSpec.methodBuilder("autoGenerate")
                 .addModifiers(Modifier.PUBLIC)
                 .addParameter(LIFECYCLE_OWNER, "owner", Modifier.FINAL)
+                .addParameter(OBJECT, "host", Modifier.FINAL)
                 .addAnnotation(Override::class.java)
         for (binder in mMethodInfoList) {
             builder.addCode(createMethodCodeBlock(binder))
@@ -101,7 +103,7 @@ class ClassCodeGenerator {
     new Observer<String>() {
     @Override
     public void onChanged(@Nullable String s) {
-    // 调用@BusObserver注解的接收数据的方法((MainActivity) owner).observer1(t);
+    // 调用@BusObserver注解的接收数据的方法((MainActivity) host).observer1(t);
     }
     }
      */
@@ -123,7 +125,7 @@ class ClassCodeGenerator {
                 .addModifiers(Modifier.PUBLIC)
         methodBuilder.addParameter(typeName, "t")
         // ((MainActivity) owner).observer1(t);
-        methodBuilder.addStatement("((${mOwnerClassName?.simpleName()}) owner).${methodInfo.methodName}(t)")
+        methodBuilder.addStatement("((${mHostClassName?.simpleName()}) host).${methodInfo.methodName}(t)")
         // 创建匿名内部类
         return TypeSpec.anonymousClassBuilder("")
                 .addSuperinterface(ParameterizedTypeName.get(OBSERVER, typeName))
@@ -135,9 +137,9 @@ class ClassCodeGenerator {
      * 添加元素，用于生成类
      */
     fun addElement(element: Element) {
-        if (mOwnerClassName == null) {
-            mOwnerClassName = ClassName.get(element.enclosingElement as TypeElement)// getEnclosingElement()所在类的对象信息
-            mPackageName = mOwnerClassName!!.packageName()
+        if (mHostClassName == null) {
+            mHostClassName = ClassName.get(element.enclosingElement as TypeElement)// getEnclosingElement()所在类的对象信息
+            mPackageName = mHostClassName!!.packageName()
         }
 
         val busObserverAnnotationClass = BusObserver::class.java

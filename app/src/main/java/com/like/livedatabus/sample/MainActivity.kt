@@ -18,6 +18,7 @@ class MainActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         mBinding
+        MainViewModel(this)
     }
 
     @BusObserver(["like1"])
@@ -44,7 +45,7 @@ class MainActivity : BaseActivity() {
         val oldValue = if (text.isEmpty()) 0 else text.toInt()
         val newValue = oldValue + 1
         thread {
-            LiveDataBus.post("like3", newValue)
+            LiveDataBus.post("like4", newValue)
         }
     }
 

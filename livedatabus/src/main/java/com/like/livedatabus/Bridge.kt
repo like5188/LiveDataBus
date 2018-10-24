@@ -12,9 +12,9 @@ open class Bridge {
     /**
      * 注册宿主及其父类
      */
-    fun register(owner: LifecycleOwner) {
+    fun register(owner: LifecycleOwner, host: Any) {
         try {
-            registerAllHierarchyFromOwner(owner, owner.javaClass)
+            registerAllHierarchyFromOwner(owner, host, host.javaClass)
         } catch (e: Exception) {
             e.printStackTrace()
         }
@@ -27,7 +27,7 @@ open class Bridge {
      * @throws Exception
      */
     @Throws(Exception::class)
-    private fun registerAllHierarchyFromOwner(owner: LifecycleOwner, clazz: Class<*>?) {
+    private fun registerAllHierarchyFromOwner(owner: LifecycleOwner, host: Any, clazz: Class<*>?) {
         clazz ?: return
         Log.d(LiveDataBus.TAG, "registerAllHierarchyFromOwner --> $clazz")
         // 查找自动生成的代理类，此类继承Bridge类
@@ -37,23 +37,24 @@ open class Bridge {
         } catch (e: Exception) {
         }
         // 初始化
-        proxyClass?.let {
-            val bridge: Bridge = it.newInstance() as Bridge
-            bridge.autoGenerate(owner)
+        proxyClass?.newInstance().let {
+            if (it is Bridge) {
+                it.autoGenerate(owner, host)
+            }
         }
         // 继续查找并初始化父类。这里过滤开始的字符，及过滤android和java系统自带的类。
         val superClass = clazz.superclass
         if (superClass != null
                 && !superClass.name.startsWith("android.")
                 && !superClass.name.startsWith("java.")) {
-            registerAllHierarchyFromOwner(owner, superClass)
+            registerAllHierarchyFromOwner(owner, host, superClass)
         }
     }
 
     /**
      * 自动生成代码时重写此方法，方法体是对entity中所有注册的tag进行observe()方法的调用
      */
-    protected open fun autoGenerate(owner: LifecycleOwner) {
+    protected open fun autoGenerate(owner: LifecycleOwner, host: Any) {
     }
 
     /**
