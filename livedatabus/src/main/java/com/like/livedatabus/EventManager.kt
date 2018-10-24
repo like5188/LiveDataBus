@@ -9,16 +9,13 @@ object EventManager {
     private val eventList = mutableListOf<Event<*>>()
 
     fun <T> observe(owner: LifecycleOwner, tag1: String, tag2: String, isSticky: Boolean, observer: Observer<T>) {
-        val event = Event(owner, tag1, tag2, observer)
+        val liveData = getLiveData<T>(tag1, tag2, isSticky) ?: BusLiveData()
+        val observerWrapper = BusObserverWrapper(observer, liveData)
+        val event = Event(owner, tag1, tag2, observerWrapper, liveData)
         if (eventList.contains(event)) {
             Log.e(LiveDataBus.TAG, "已经订阅过事件：$event")
             return
         }
-        var liveData = getLiveData<T>(tag1, tag2, isSticky)
-        if (liveData == null) {
-            liveData = BusLiveData()
-        }
-        event.liveData = liveData
         event.observe()
         eventList.add(event)
         Log.i(LiveDataBus.TAG, "订阅事件成功：$event，事件总数：${getEventCount()}，宿主总数：${getOwnerCount()}")
@@ -46,7 +43,15 @@ object EventManager {
         }
     }
 
-    fun remove(owner: LifecycleOwner) {
+    fun <T> removeObserver(observer: Observer<T>) {
+        eventList.removeAll {
+            Log.e(LiveDataBus.TAG, "${it.observer is BusObserverWrapper}")
+            it.observer == observer
+        }
+        Log.i(LiveDataBus.TAG, "取消事件：$observer，剩余事件总数：${getEventCount()}")
+    }
+
+    fun removeObservers(owner: LifecycleOwner) {
         eventList.removeAll { it.owner == owner }
         Log.i(LiveDataBus.TAG, "取消宿主：$owner，剩余宿主总数：${getOwnerCount()}")
     }

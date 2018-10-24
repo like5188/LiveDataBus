@@ -23,7 +23,17 @@ class BusLiveData<T> : MutableLiveData<T>() {
     override fun observe(owner: LifecycleOwner, observer: Observer<T>) {
         //mSetValue 可过滤掉liveData首次创建时监听之前的遗留的值
         mSetValue = mNeedCurrentDataWhenFirstObserve
-        super.observe(owner, BusObserverWrapper(observer, this))
+        super.observe(owner, observer)
+    }
+
+    override fun removeObserver(observer: Observer<T>) {
+        super.removeObserver(observer)
+        EventManager.removeObserver(observer)
+    }
+
+    override fun removeObservers(owner: LifecycleOwner) {
+        super.removeObservers(owner)
+        EventManager.removeObservers(owner)
     }
 
 }

@@ -7,12 +7,12 @@ class Event<T>(
         val owner: LifecycleOwner,
         val tag1: String,
         val tag2: String,
-        private val observer: Observer<T>
+        val observer: Observer<T>,
+        val liveData: BusLiveData<T>
 ) {
-    var liveData: BusLiveData<T>? = null
 
     fun observe() {
-        liveData?.observe(owner, observer)
+        liveData.observe(owner, observer)
     }
 
     override fun equals(other: Any?): Boolean {
