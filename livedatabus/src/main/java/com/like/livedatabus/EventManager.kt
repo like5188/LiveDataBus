@@ -48,12 +48,12 @@ object EventManager {
         eventList.removeAll {
             it.observer == observer
         }
-        Log.i(LiveDataBus.TAG, "取消事件：$observer，剩余事件总数：${getEventCount()}")
+        Log.i(LiveDataBus.TAG, "取消事件：$observer，剩余事件总数：${getEventCount()}，剩余宿主总数：${getOwnerCount()}")
     }
 
     fun removeObservers(owner: LifecycleOwner) {
         eventList.removeAll { it.owner == owner }
-        Log.i(LiveDataBus.TAG, "取消宿主：$owner，剩余宿主总数：${getOwnerCount()}")
+        Log.i(LiveDataBus.TAG, "取消宿主：$owner，剩余事件总数：${getEventCount()}，剩余宿主总数：${getOwnerCount()}")
     }
 
     /**
