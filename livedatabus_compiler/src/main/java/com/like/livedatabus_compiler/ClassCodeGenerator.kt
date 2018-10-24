@@ -49,7 +49,7 @@ class ClassCodeGenerator {
     private fun createClass(): TypeSpec =
             TypeSpec.classBuilder(mOwnerClassName?.simpleName() + CLASS_UNIFORM_MARK)
                     .addModifiers(Modifier.PUBLIC, Modifier.FINAL)
-                    .superclass(ParameterizedTypeName.get(BRIDGE))
+                    .superclass(BRIDGE)
                     .build()
 
     /**

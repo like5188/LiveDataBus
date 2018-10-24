@@ -1,13 +1,7 @@
 package com.like.livedatabus_compiler
 
-import com.google.auto.common.SuperficialValidation
-import com.google.auto.service.AutoService
 import com.like.livedatabus_annotations.BusObserver
-import java.util.*
-import javax.annotation.processing.AbstractProcessor
-import javax.annotation.processing.ProcessingEnvironment
-import javax.annotation.processing.Processor
-import javax.annotation.processing.RoundEnvironment
+import javax.annotation.processing.*
 import javax.lang.model.SourceVersion
 import javax.lang.model.element.Element
 import javax.lang.model.element.TypeElement
@@ -15,9 +9,12 @@ import javax.lang.model.element.TypeElement
 /**
  * RxBus注解处理器。每一个注解处理器类都必须有一个空的构造函数，默认不写就行;
  */
-@AutoService(Processor::class)
+@SupportedSourceVersion(SourceVersion.RELEASE_8)
+@SupportedAnnotationTypes("com.like.livedatabus_annotations.BusObserver")
+@SupportedOptions(BusProcessor.KAPT_KOTLIN_GENERATED_OPTION_NAME)
 class BusProcessor : AbstractProcessor() {
     companion object {
+        const val KAPT_KOTLIN_GENERATED_OPTION_NAME = "kapt.kotlin.generated"
         private val CODE_BUILDER_MAP = mutableMapOf<TypeElement, ClassCodeGenerator>()
     }
 
@@ -48,11 +45,12 @@ class BusProcessor : AbstractProcessor() {
     override fun process(annotations: Set<TypeElement>, roundEnv: RoundEnvironment): Boolean {
         // 返回使用给定注解类型的元素
         val elements = roundEnv.getElementsAnnotatedWith(BusObserver::class.java) as Set<Element>
+        if (elements.isEmpty()) {
+            return false
+        }
         for (element in elements) {
             try {
                 // 验证有效性
-                if (!SuperficialValidation.validateElement(element))
-                    continue
                 if (!ProcessUtils.verifyEncloseingClass(element) || !ProcessUtils.verifyMethod(element))
                     continue
                 // 添加类(包含有被BusObserver注解的方法的类)
@@ -71,28 +69,10 @@ class BusProcessor : AbstractProcessor() {
         }
 
         // 生成代码
-        CODE_BUILDER_MAP.forEach { typeElement, classCodeGenerator ->
+        CODE_BUILDER_MAP.forEach { _, classCodeGenerator ->
             classCodeGenerator.create()
         }
         return true
-    }
-
-    /**
-     * 这里必须指定，这个注解处理器是注册给哪个注解的。注意，它的返回值是一个字符串的集合，包含本处理器想要处理的注解类型的合法全称
-     *
-     * @return 注解器所支持的注解类型集合，如果没有这样的类型，则返回一个空集合
-     */
-    override fun getSupportedAnnotationTypes(): Set<String> {
-        return setOf(BusObserver::class.java.canonicalName)
-    }
-
-    /**
-     * 指定使用的Java版本，通常这里返回SourceVersion.latestSupported()，默认返回SourceVersion.RELEASE_6
-     *
-     * @return 使用的Java版本
-     */
-    override fun getSupportedSourceVersion(): SourceVersion {
-        return SourceVersion.latestSupported()
     }
 
 }

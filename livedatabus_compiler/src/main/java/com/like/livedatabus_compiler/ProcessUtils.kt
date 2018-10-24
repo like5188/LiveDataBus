@@ -80,10 +80,11 @@ object ProcessUtils {
     }
 
     fun error(element: Element, format: String, vararg args: Any) {
-        var format = format
-        if (args.isNotEmpty())
-            format = String.format(format, *args)
-        ProcessUtils.messager!!.printMessage(Diagnostic.Kind.ERROR, format, element)
+        val f = if (args.isNotEmpty())
+            String.format(format, *args)
+        else
+            format
+        ProcessUtils.messager?.printMessage(Diagnostic.Kind.ERROR, f, element)
     }
 
 }
