@@ -15,6 +15,6 @@ open class BaseActivity : AppCompatActivity() {
 
     @BusObserver(["like3"])
     fun test(i: Int) {
-        Log.e("LiveDataBus", "BaseActivity onChanged tag1=like3，数据：$i")
+        Log.e("LiveDataBus", "BaseActivity test tag1=like3，数据：$i")
     }
 }

@@ -22,23 +22,23 @@ class MainActivity : BaseActivity() {
         MainViewModel(this)
     }
 
-    @BusObserver(["like1"])
+    @BusObserver(["like1"], requestCode = "1")
     fun observer1(i: Int) {
-        Log.e("LiveDataBus", "MainActivity onChanged tag1=like1，数据：$i")
+        Log.e("LiveDataBus", "MainActivity observer1 tag1=like1，数据：$i")
     }
 
-    @BusObserver(["like2"])
-    fun observer2(s: String) {
-        Log.e("LiveDataBus", "MainActivity onChanged tag1=like2，数据：$s")
+    @BusObserver(["like1"], requestCode = "2")
+    fun observer2(s: Int) {
+        Log.e("LiveDataBus", "MainActivity observer2 tag1=like1，数据：$s")
     }
 
     fun changeData1(view: View) {
-        LiveDataBus.post("like1", 1)
+        LiveDataBus.post("like1", "1", 1)
     }
 
     fun changeData2(view: View) {
         thread {
-            LiveDataBus.post("like2", "2")
+            LiveDataBus.post("like1", "2", "2")
         }
     }
 
