@@ -2,7 +2,7 @@
 
 模块|livedatabus-api|livedatabus_compiler
 ---|---|---
-最新版本|[![](https://jitpack.io/v/like5188/LiveDataBus.svg)](https://jitpack.io/#like5188/LiveDataBus)|[![](https://jitpack.io/v/like5188/LiveDataBus.svg)](https://jitpack.io/#like5188/LiveDataBus)
+最新版本|[![Download](https://jitpack.io/v/like5188/LiveDataBus.svg)](https://jitpack.io/#like5188/LiveDataBus)|[![Download](https://jitpack.io/v/like5188/LiveDataBus.svg)](https://jitpack.io/#like5188/LiveDataBus)
 
 ## 功能介绍
 1、该项目基于LiveData开发的。
