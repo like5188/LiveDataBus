@@ -22,7 +22,7 @@ object EventManager {
         eventList.add(event)
         liveData.observe(owner, observer)
         Log.i(LiveDataBus.TAG, "订阅事件成功：$event")
-        logHostOwnerEventCount()
+        logHostOwnerEventDetails()
     }
 
     fun <T> post(tag: String, requestCode: String, t: T, isSticky: Boolean) {
@@ -45,13 +45,13 @@ object EventManager {
             it.observer == observer
         }
         Log.i(LiveDataBus.TAG, "取消事件：$observer")
-        logHostOwnerEventCount()
+        logHostOwnerEventDetails()
     }
 
     fun removeObservers(owner: LifecycleOwner) {
         eventList.removeAll { it.owner == owner }
         Log.i(LiveDataBus.TAG, "取消宿主：$owner")
-        logHostOwnerEventCount()
+        logHostOwnerEventDetails()
     }
 
     /**
@@ -77,7 +77,10 @@ object EventManager {
         }
     }
 
-    private fun logHostOwnerEventCount() {
+    /**
+     * 打印缓存的事件、宿主、宿主所属生命周期类的详情
+     */
+    private fun logHostOwnerEventDetails() {
         val events = eventList.toSet()
         Log.d(LiveDataBus.TAG, "事件总数：${events.size}，包含：$events")
 
