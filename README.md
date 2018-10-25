@@ -30,16 +30,15 @@
 
 2、在需要接收消息的类的初始化方法（通常为构造函数）中调用`register`方法进行注册宿主。当在父类调用`register`方法后，在子类中无需再调用。
 ```java
-    // java
     LiveDataBus.register(host: Any)
     LiveDataBus.register(host: Any, owner: LifecycleOwner)
 
-    // kotlin
+    // kotlin中还可使用下面的扩展方法注册
     liveDataBusRegister()
     liveDataBusRegister(owner: LifecycleOwner)
 ```
 
-3、发送普通消息可以使用`post`方法。
+3、发送消息可以使用`post`方法。
 ```java
     LiveDataBus.post(tag: String, t: T)
     LiveDataBus.post(tag: String, requestCode: String, t: T)
