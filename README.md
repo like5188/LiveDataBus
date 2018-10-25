@@ -1,5 +1,10 @@
-# LiveDataBus
+#### 最新版本
 
+模块|livedatabus-api|livedatabus_compiler
+---|---|---
+最新版本|[![](https://jitpack.io/v/like5188/LiveDataBus.svg)](https://jitpack.io/#like5188/LiveDataBus)|[![](https://jitpack.io/v/like5188/LiveDataBus.svg)](https://jitpack.io/#like5188/LiveDataBus)
+
+## 功能介绍
 1、该项目基于LiveData开发的。
 
     ①、LiveData可以感知被绑定的组件的生命周期，会在组件销毁时，自动取消注册。
@@ -16,12 +21,6 @@
     ⑥、必须要tag、requestCode、参数类型，这三项与发送消息完全一致，才能接收到消息。
 
 3、同一个宿主只能注册一次（重复注册只有第一次有效）、同一个宿主中不能有相同的tag+requestCode（重复了就只有第一个有效）。
-
-#### 最新版本
-
-模块|livedatabus-api|livedatabus_compiler
----|---|---
-最新版本|[![](https://jitpack.io/v/like5188/LiveDataBus.svg)](https://jitpack.io/#like5188/LiveDataBus)|[![](https://jitpack.io/v/like5188/LiveDataBus.svg)](https://jitpack.io/#like5188/LiveDataBus)
 
 ## 使用方法：
 
