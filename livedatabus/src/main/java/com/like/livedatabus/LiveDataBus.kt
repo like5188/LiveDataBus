@@ -56,6 +56,7 @@ object LiveDataBus {
             Log.e(LiveDataBus.TAG, "已经注册过宿主：$host")
             return
         }
+        Log.i(LiveDataBus.TAG, "注册宿主：$host")
         mBridge.register(host, owner)
     }
 
