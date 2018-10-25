@@ -1,6 +1,6 @@
 # LiveDataBus
 
-1、该项目基于LiveData开发的。LiveData可以感知被绑定的组件的生命周期，会在组件销毁时，自动取消注册。当组件处于活跃状态或者从不活跃状态到活跃状态时总是能收到最新的数据。在不活跃状态时，不会收到数据。
+1、该项目基于LiveData开发的。LiveData可以感知被绑定的组件的生命周期，会在组件销毁时，自动取消注册。组件在不活跃状态时，不会收到数据。当组件处于活跃状态或者从不活跃状态到活跃状态时总是能收到最新的数据。
 
 2、通过`@BusObserver`注解方法来接收消息，此方法是在主线程中，可以设置tag组、requestCode（当tag相同时，可以用这个来区分）、Sticky标记（可以收到注册之前发送过的最新一条消息）。并且注解的方法中的参数类型必须和发送的消息类型一致，否则接收不到。
 
@@ -35,8 +35,8 @@
     LiveDataBus.register(host: Any, owner: LifecycleOwner)
 
     // kotlin
-    registerLiveDataBus()
-    registerLiveDataBus(owner: LifecycleOwner)
+    liveDataBusRegister()
+    liveDataBusRegister(owner: LifecycleOwner)
 ```
 
 3、发送普通消息可以使用`post`方法。

@@ -8,9 +8,9 @@ import java.lang.IllegalArgumentException
  * 注册宿主及其所属的生命周期类
  *
  * 注意：用此方法注册，调用者必须实现LifecycleOwner接口。
- * 否则请调用{@link registerLiveDataBus(owner: LifecycleOwner)}方法进行注册。
+ * 否则请调用{@link liveDataBusRegister(owner: LifecycleOwner)}方法进行注册。
  */
-fun Any.registerLiveDataBus() {
+fun Any.liveDataBusRegister() {
     LiveDataBus.register(this)
 }
 
@@ -19,7 +19,7 @@ fun Any.registerLiveDataBus() {
  *
  * @param owner 宿主所属的生命周期类
  */
-fun Any.registerLiveDataBus(owner: LifecycleOwner) {
+fun Any.liveDataBusRegister(owner: LifecycleOwner) {
     LiveDataBus.register(this, owner)
 }
 
