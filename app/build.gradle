@@ -13,12 +13,40 @@ android {
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
-    buildTypes {
+
+    signingConfigs {
+        debug {
+            storeFile file("../like.jks")
+            storePassword "like5488"
+            keyAlias "like"
+            keyPassword "like5488"
+        }
         release {
+            storeFile file("../like.jks")
+            storePassword "like5488"
+            keyAlias "like"
+            keyPassword "like5488"
+        }
+    }
+
+    buildTypes {
+        debug {
             minifyEnabled false
+            zipAlignEnabled false
+            shrinkResources false
+            debuggable true
+            signingConfig signingConfigs.debug
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+        release {
+            minifyEnabled true
+            zipAlignEnabled true
+            shrinkResources true
+            signingConfig signingConfigs.release
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    
     dataBinding {
         enabled true
     }

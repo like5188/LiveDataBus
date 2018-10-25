@@ -19,6 +19,13 @@ public class SecondActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         mBinding = DataBindingUtil.setContentView(this, R.layout.activity_second);
         LiveDataBus.register(this);
+        Log.e("LiveDataBus", "SecondActivity onCreate");
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Log.e("LiveDataBus", "SecondActivity onDestroy");
     }
 
     public void changeData1(View view) {

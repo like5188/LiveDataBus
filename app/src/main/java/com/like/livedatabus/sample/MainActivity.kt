@@ -20,6 +20,12 @@ class MainActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         mBinding
         MainViewModel(this)
+        Log.w("LiveDataBus", "MainActivity onCreate")
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        Log.w("LiveDataBus", "MainActivity onDestroy")
     }
 
     @BusObserver(["like1", "like2"], requestCode = "1")
