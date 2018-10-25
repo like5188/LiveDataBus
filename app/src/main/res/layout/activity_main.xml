@@ -18,19 +18,17 @@
             android:onClick="changeData2"
             android:text="改变数据2" />
 
-        <TextView
-            android:id="@+id/tv1"
+        <Button
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="显示数据1"
-            android:padding="10dp" />
+            android:onClick="changeData3"
+            android:text="改变数据3" />
 
-        <TextView
-            android:id="@+id/tv2"
+        <Button
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="显示数据2"
-            android:padding="10dp" />
+            android:onClick="changeData4"
+            android:text="改变数据4" />
 
         <Button
             android:layout_width="match_parent"

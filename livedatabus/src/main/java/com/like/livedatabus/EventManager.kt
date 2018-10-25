@@ -26,17 +26,18 @@ object EventManager {
     }
 
     fun <T> post(tag: String, requestCode: String, t: T, isSticky: Boolean) {
+        val requestCodeLogMessage = if (requestCode.isNotEmpty()) ", requestCode='$requestCode'" else ""
         val liveData = getLiveData<T>(tag, requestCode, isSticky)
         if (liveData != null) {
             if (Looper.getMainLooper() == Looper.myLooper()) {
-                Log.d(LiveDataBus.TAG, "在主线程发送消息 --> tag=$tag，requestCode=$requestCode，内容=$t")
+                Log.v(LiveDataBus.TAG, "在主线程发送消息 --> tag=$tag$requestCodeLogMessage，内容=$t")
                 liveData.setValue(t)
             } else {
-                Log.v(LiveDataBus.TAG, "在非主线程发送消息 --> tag=$tag，requestCode=$requestCode，内容=$t")
+                Log.v(LiveDataBus.TAG, "在非主线程发送消息 --> tag=$tag$requestCodeLogMessage，内容=$t")
                 liveData.postValue(t)
             }
         } else {
-            Log.e(LiveDataBus.TAG, "发送消息失败，没有订阅事件： --> tag=$tag，requestCode=$requestCode")
+            Log.e(LiveDataBus.TAG, "发送消息失败，没有订阅事件： --> tag=$tag$requestCodeLogMessage")
         }
     }
 

@@ -3,6 +3,7 @@ package com.like.livedatabus.sample
 import android.content.Intent
 import android.databinding.DataBindingUtil
 import android.os.Bundle
+import android.support.v4.content.ContextCompat.startActivity
 import android.util.Log
 import android.view.View
 import com.like.livedatabus.LiveDataBus
@@ -23,30 +24,30 @@ class MainActivity : BaseActivity() {
 
     @BusObserver(["like1"])
     fun observer1(i: Int) {
-        Log.e("LiveDataBus", "MainActivity onChanged tag1=like1")
-        mBinding.tv1.text = i.toString()
+        Log.e("LiveDataBus", "MainActivity onChanged tag1=like1，数据：$i")
     }
 
     @BusObserver(["like2"])
     fun observer2(s: String) {
-        Log.e("LiveDataBus", "MainActivity onChanged tag1=like2")
-        mBinding.tv2.text = s
+        Log.e("LiveDataBus", "MainActivity onChanged tag1=like2，数据：$s")
     }
 
     fun changeData1(view: View) {
-        val text = mBinding.tv1.text.toString()
-        val oldValue = if (text.isEmpty()) 0 else text.toInt()
-        val newValue = oldValue + 1
-        LiveDataBus.post("like1", newValue)
+        LiveDataBus.post("like1", 1)
     }
 
     fun changeData2(view: View) {
-        val text = mBinding.tv2.text.toString()
-        val oldValue = if (text.isEmpty()) 0 else text.toInt()
-        val newValue = oldValue + 1
         thread {
-            LiveDataBus.post("like4", newValue)
+            LiveDataBus.post("like2", "2")
         }
+    }
+
+    fun changeData3(view: View) {
+        LiveDataBus.post("like3", 3)
+    }
+
+    fun changeData4(view: View) {
+        LiveDataBus.post("like4", 4)
     }
 
     fun startActivity2(view: View) {
