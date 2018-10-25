@@ -12,9 +12,9 @@ open class Bridge {
     /**
      * 注册宿主及其父类
      */
-    fun register(owner: LifecycleOwner, host: Any) {
+    fun register(host: Any, owner: LifecycleOwner) {
         try {
-            registerAllHierarchyFromOwner(owner, host, host.javaClass)
+            registerAllHierarchyFromOwner(host, owner, host.javaClass)
         } catch (e: Exception) {
             e.printStackTrace()
         }
@@ -23,11 +23,11 @@ open class Bridge {
     /**
      * 初始化宿主及其父类，及调用它们的autoGenerate方法，避免父类中的tag未注册
      *
-     * @param clazz
+     * @param clazz 宿主的类
      * @throws Exception
      */
     @Throws(Exception::class)
-    private fun registerAllHierarchyFromOwner(owner: LifecycleOwner, host: Any, clazz: Class<*>?) {
+    private fun registerAllHierarchyFromOwner(host: Any, owner: LifecycleOwner, clazz: Class<*>?) {
         clazz ?: return
         Log.d(LiveDataBus.TAG, "registerAllHierarchyFromOwner --> $clazz")
         // 查找自动生成的代理类，此类继承Bridge类
@@ -39,31 +39,37 @@ open class Bridge {
         // 初始化
         proxyClass?.newInstance().let {
             if (it is Bridge) {
-                it.autoGenerate(owner, host)
+                it.autoGenerate(host, owner)
             }
         }
-        // 继续查找并初始化父类。这里过滤开始的字符，及过滤android和java系统自带的类。
+        // 继续查找并初始化父类宿主。这里过滤开始的字符，及过滤android和java系统自带的类。
         val superClass = clazz.superclass
         if (superClass != null
                 && !superClass.name.startsWith("android.")
                 && !superClass.name.startsWith("java.")) {
-            registerAllHierarchyFromOwner(owner, host, superClass)
+            registerAllHierarchyFromOwner(host, owner, superClass)
         }
     }
 
     /**
      * 自动生成代码时重写此方法，方法体是对entity中所有注册的tag进行observe()方法的调用
      */
-    protected open fun autoGenerate(owner: LifecycleOwner, host: Any) {
+    protected open fun autoGenerate(host: Any, owner: LifecycleOwner) {
     }
 
     /**
-     * 在代理类中重写autoGenerate方法，然后调用observe方法进行注册
+     * 在代理类中重写autoGenerate方法，然后调用此方法进行注册
      */
-    protected fun <T> observe(owner: LifecycleOwner, tag1: String, tag2: String, isSticky: Boolean, observer: Observer<T>) {
-        if (tag1.isEmpty()) {
+    protected fun <T> observe(host: Any?, owner: LifecycleOwner?, tag: String?, requestCode: String?, isSticky: Boolean?, observer: Observer<T>?) {
+        host ?: return
+        owner ?: return
+        tag ?: return
+        requestCode ?: return
+        isSticky ?: return
+        observer ?: return
+        if (tag.isEmpty()) {
             return
         }
-        EventManager.observe(owner, tag1, tag2, isSticky, observer)
+        EventManager.observe(host, owner, tag, requestCode, isSticky, observer)
     }
 }

@@ -4,6 +4,6 @@ package com.like.livedatabus_annotations
 @Target(AnnotationTarget.FUNCTION)
 annotation class BusObserver(
         val value: Array<String>,
-        val tag2: String = "",
+        val requestCode: String = "",
         val isSticky: Boolean = false
 )

@@ -5,9 +5,13 @@ import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.Observer
 
 class BusLiveData<T> : MutableLiveData<T>() {
-    // 首次注册的时候，是否需要当前LiveData的最新数据
+    /**
+     * 首次注册的时候，是否需要当前LiveData的最新数据
+     */
     internal var mNeedCurrentDataWhenFirstObserve = false
-    // 主动触发数据更新事件才通知所有Observer
+    /**
+     * 主动触发数据更新事件才通知所有Observer
+     */
     internal var mSetValue = false
 
     override fun setValue(value: T) {
