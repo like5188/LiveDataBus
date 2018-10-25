@@ -27,8 +27,8 @@ class MainActivity : BaseActivity() {
         Log.e("LiveDataBus", "MainActivity observer1 tag1=like1，数据：$i")
     }
 
-    @BusObserver(["like1"], requestCode = "2")
-    fun observer2(s: String) {
+    @BusObserver(["like1"])
+    fun observer2(s: Int) {
         Log.e("LiveDataBus", "MainActivity observer2 tag1=like1，数据：$s")
     }
 
