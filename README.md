@@ -2,13 +2,11 @@
 
 1、该项目基于LiveData开发的。
 
-2、通过`@BusObserver`注解方法来接收消息，此方法是在主线程中，可以设置tag组、requestCode（当tag相同时，可以用这个来区分）、Sticky标记。并且注解的方法中的参数类型必须和发送的消息类型一致，否则接收不到。
+2、通过`@BusObserver`注解方法来接收消息，此方法是在主线程中，可以设置tag组、requestCode（当tag相同时，可以用这个来区分）、Sticky标记（可以收到发送过的最新一条消息）。并且注解的方法中的参数类型必须和发送的消息类型一致，否则接收不到。
 
-3、可以发送普通消息和Sticky消息，Sticky消息在接收到后就会和普通消息一样了。
+3、同一个宿主只能注册一次（重复注册只有第一次有效）、同一个宿主中不能有相同的tag+requestCode（重复了就只有第一个有效）。
 
-4、同一个宿主只能注册一次（重复注册只有第一次有效）、同一个宿主中不能有相同的tag+requestCode（重复了就只有第一个有效）。
-
-5、其它特点请参照LiveData相关介绍。
+4、其它特点请参照LiveData相关介绍。
 
 ## 使用方法：
 
@@ -32,92 +30,58 @@
     }
 ```
 
-2、在需要接收消息的类的初始化方法（通常为构造函数）中调用`register(this)`方法进行注册宿主（通常在Activity的onCreate()方法中调用，也可以是其它任何类）。当在父类调用`register(this)`方法后，在子类无需再调用了，调用了也行，会自动防重复注册宿主。
+2、在需要接收消息的类的初始化方法（通常为构造函数）中调用`register`方法进行注册宿主。当在父类调用`register`方法后，在子类中无需再调用。
 ```java
-    RxBus.register(this);
+    // java
+    LiveDataBus.register(host: Any)
+    LiveDataBus.register(host: Any, owner: LifecycleOwner)
+
+    // kotlin
+    registerLiveDataBus()
+    registerLiveDataBus(owner: LifecycleOwner)
 ```
 
-3、在销毁宿主的实例时调用`unregister(this)`方法进行取消注册宿主（通常在Activity的onDestroy()方法中调用）。
+3、发送普通消息可以使用`post`方法。
 ```java
-    RxBus.unregister(this);
+    LiveDataBus.post(tag: String, t: T)
+    LiveDataBus.post(tag: String, requestCode: String, t: T)
 ```
 
-4、发送普通消息可以使用`post()`方法。
-```java
-    RxBus.post(tag);
-    RxBus.post(tag, content);
-    RxBus.post(tag, code, content);
-```
-
-5、发送Sticky消息使用`postSticky()`方法，注意Sticky消息在第一次接收后，就会销毁。和发送普通消息相比，实际上就是延迟了第一次接收消息的时间（用来替代Intent传递数据）。
-```java
-    RxBus.postSticky(tag, content);
-    RxBus.postSticky(tag, code, content);
-```
-
-6、接收消息和发送消息是一一对应的。使用`@RxBusSubscribe`注解一个方法，被注解的方法的参数最多只能是1个。只能被public修饰，且不能被static修饰(即只能使用public void修饰)。其中可以设置标签组、请求码、线程(`RxBusThread`)、Sticky标记。
+4、接收消息和发送消息是一一对应的。必须要tag、requestCode、数据类型，这三项与发送消息完全一致，才能接收到消息。
+使用`@BusObserver`注解一个方法，其中可以设置标签组、requestCode、Sticky标记。
+被注解的方法只能使用public void修饰（kotlin中只能使用fun修饰）。且参数只能是1个。
 ```java
     发送消息：
-    RxBus.post("tag");
+    LiveDataBus.post(tag: String, t: T)
     
     接收消息：
-    @RxBusSubscribe("tag")
-    public void test() {
+    // java
+    @BusObserver("tag")
+    public void test(T t) {
     }
     
    // kotlin
-   @RxBusSubscribe("tag")
-    fun test() {
+   @BusObserver(["tag"])
+    fun test(t: T) {
     }
 ```
 ```java
     发送消息：
-    RxBus.post("tag", 123);
+    LiveDataBus.post(tag: String, requestCode: String, t: T)
     
     接收消息：
-    @RxBusSubscribe("tag")
-    public void test(int data) {
+    // java
+    @BusObserver(value = "tag", requestCode = "requestCode")
+    public void test(T t) {
     }
-```
-```java
-    发送消息：
-    RxBus.post("tag", "code", 2.3);
-    
-    接收消息：
-    @RxBusSubscribe(value = "tag", code = "code")
-    public void test(double data) {
-    }
-```
-```java
-    发送消息：
-    RxBus.post("tag1", "1");
-    RxBus.post("tag2", "2");
-    
-    接收消息：
-    @RxBusSubscribe(value = {"tag1", "tag2"})
-    public void test(String data) {
-    }
-```
-```java
-    发送Sticky消息：
-    RxBus.postSticky("tag", "1");
-    
-    接收Sticky消息：
-    @RxBusSubscribe(value = "tag", isSticky = true)
-    public void test(String data) {
-    }
-```
-```java
-    发送Sticky消息：
-    RxBus.postSticky("tag", "code", 1);
-    
-    接收Sticky消息：
-    @RxBusSubscribe(value = "tag", code = "code", isSticky = true)
-    public void test(int data) {
+
+   // kotlin
+   @BusObserver(["tag"], requestCode = "requestCode")
+    fun test(t: T) {
     }
 ```
 
-7、Proguard
+5、Proguard
 ```java
     -keep class * extends com.like.rxbus.RxBusProxy
     -keep class com.like.rxbus.annotations.**{*;}

@@ -33,7 +33,7 @@ class MainActivity : BaseActivity() {
     }
 
     fun changeData1(view: View) {
-        LiveDataBus.post("like1", "1", 1)
+        LiveDataBus.post("like1", 1)
     }
 
     fun changeData2(view: View) {
