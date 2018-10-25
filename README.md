@@ -17,7 +17,7 @@
 
 3、同一个宿主只能注册一次（重复注册只有第一次有效）、同一个宿主中不能有相同的tag+requestCode（重复了就只有第一个有效）。
 
-## 最新版本
+#### 最新版本
 
 模块|livedatabus-api|livedatabus_compiler
 ---|---|---
