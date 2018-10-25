@@ -34,8 +34,8 @@
 ```groovy
     dependencies {
         compile 'com.github.like5188:LiveDataBus:版本号'
-        annotationProcessor 'com.github.like5188.LiveDataBus:livedatabus-compiler:版本号' // java
-        // kapt 'com.github.like5188.LiveDataBus:livedatabus-compiler:版本号' // kotlin
+        annotationProcessor 'com.github.like5188.LiveDataBus:livedatabus_compiler:版本号' // java
+        // kapt 'com.github.like5188.LiveDataBus:livedatabus_compiler:版本号' // kotlin
     }
 ```
 
