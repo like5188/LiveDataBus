@@ -38,13 +38,13 @@ public class SecondActivity extends AppCompatActivity {
 
     @BusObserver(value = "like1", isSticky = true)
     public void observer1(int i) {
-        Log.e("LiveDataBus", "SecondActivity onChanged tag1=like1");
+        Log.e("LiveDataBus", "SecondActivity onChanged tag=like1");
         mBinding.tv1.setText(String.valueOf(i));
     }
 
     @BusObserver(value = "like2", requestCode = "re")
     public void observer2(User u) {
-        Log.e("LiveDataBus", "SecondActivity onChanged tag1=like2");
+        Log.e("LiveDataBus", "SecondActivity onChanged tag=like2");
         mBinding.tv2.setText(u.toString());
     }
 

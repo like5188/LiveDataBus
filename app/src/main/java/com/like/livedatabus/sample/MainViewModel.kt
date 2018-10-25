@@ -12,7 +12,7 @@ class MainViewModel(val activity: MainActivity) {
 
     @BusObserver(["like4"])
     fun test(i: Int) {
-        Log.e("LiveDataBus", "MainViewModel test tag1=like4，数据：$i")
+        Log.e("LiveDataBus", "MainViewModel test tag=like4，数据：$i")
     }
 
 }
