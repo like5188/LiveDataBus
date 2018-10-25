@@ -3,9 +3,9 @@ package com.like.livedatabus
 import android.arch.lifecycle.Observer
 import android.util.Log
 
-class BusObserverWrapper<T>(private val host: Any,
-                            private val tag: String,
-                            private val requestCode: String,
+class BusObserverWrapper<T>(val host: Any,
+                            val tag: String,
+                            val requestCode: String,
                             private val observer: Observer<T>,
                             private val liveData: BusLiveData<T>)
     : Observer<T> {

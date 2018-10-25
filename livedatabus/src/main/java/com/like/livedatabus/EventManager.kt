@@ -20,7 +20,6 @@ object EventManager {
             return
         }
         eventList.add(event)
-        liveData.observe(owner, observer)
         Log.i(LiveDataBus.TAG, "订阅事件成功：$event")
         logHostOwnerEventDetails()
     }
@@ -42,10 +41,13 @@ object EventManager {
     }
 
     fun <T> removeObserver(observer: Observer<T>) {
-        eventList.removeAll {
-            it.observer == observer
+        eventList.removeAll { it.observer == observer }
+        if (observer is BusObserverWrapper) {
+            val logMessage = "Event(host=${observer.host::class.java.simpleName}, tag='${observer.tag}'${if (observer.requestCode.isNotEmpty()) ", requestCode='${observer.requestCode}'" else ""})"
+            Log.i(LiveDataBus.TAG, "取消事件：$logMessage")
+        } else {
+            Log.i(LiveDataBus.TAG, "取消事件：$observer")
         }
-        Log.i(LiveDataBus.TAG, "取消事件：$observer")
         logHostOwnerEventDetails()
     }
 
@@ -83,13 +85,13 @@ object EventManager {
      */
     private fun logHostOwnerEventDetails() {
         val events = eventList.toSet()
-        Log.d(LiveDataBus.TAG, "事件总数：${events.size}，包含：$events")
+        Log.d(LiveDataBus.TAG, "事件总数：${events.size}${if (events.isEmpty()) "" else "，包含：$events"}")
 
         val hosts = eventList.distinctBy { it.host }.map { it.host::class.java.simpleName }
-        Log.d(LiveDataBus.TAG, "宿主总数：${hosts.size}，包含：$hosts")
+        Log.d(LiveDataBus.TAG, "宿主总数：${hosts.size}${if (hosts.isEmpty()) "" else "，包含：$hosts"}")
 
         val owners = eventList.distinctBy { it.owner }.map { it.owner::class.java.simpleName }
-        Log.d(LiveDataBus.TAG, "宿主所属生命周期类总数：${owners.size}，包含：$owners")
+        Log.d(LiveDataBus.TAG, "宿主所属生命周期类总数：${owners.size}${if (owners.isEmpty()) "" else "，包含：$owners"}")
     }
 
 }
