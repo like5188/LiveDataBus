@@ -51,7 +51,7 @@ object EventManager {
 
     fun removeObservers(owner: LifecycleOwner) {
         eventList.removeAll { it.owner == owner }
-        Log.i(LiveDataBus.TAG, "取消宿主：$owner")
+        Log.i(LiveDataBus.TAG, "取消宿主生命周期类相关的所有观察者：$owner")
         logHostOwnerEventDetails()
     }
 
