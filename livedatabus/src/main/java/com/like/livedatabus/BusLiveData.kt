@@ -6,11 +6,8 @@ import android.arch.lifecycle.Observer
 
 class BusLiveData<T> : MutableLiveData<T>() {
     /**
-     * 首次注册的时候，是否需要当前LiveData的最新数据
-     */
-    internal var mNeedCurrentDataWhenFirstObserve = false
-    /**
-     * 主动触发数据更新事件才通知所有Observer
+     * 主动触发数据更新事件才通知所有Observer，忽略用observe方法注册时引起的改变。
+     * 即当mSetValue为true时。则会在注册的时候就收到之前发送的最新一条消息。当为false时，则不会收到消息。
      */
     internal var mSetValue = false
 
@@ -22,12 +19,6 @@ class BusLiveData<T> : MutableLiveData<T>() {
     override fun postValue(value: T) {
         mSetValue = true
         super.postValue(value)
-    }
-
-    override fun observe(owner: LifecycleOwner, observer: Observer<T>) {
-        //mSetValue 可过滤掉liveData首次创建时监听之前的遗留的值
-        mSetValue = mNeedCurrentDataWhenFirstObserve
-        super.observe(owner, observer)
     }
 
     override fun removeObserver(observer: Observer<T>) {

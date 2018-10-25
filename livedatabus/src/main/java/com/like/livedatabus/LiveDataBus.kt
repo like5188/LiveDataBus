@@ -61,21 +61,12 @@ object LiveDataBus {
 
     @JvmStatic
     fun <T> post(tag: String, t: T) {
-        EventManager.post(tag, "", t, false)
+        EventManager.post(tag, "", t)
     }
 
     @JvmStatic
     fun <T> post(tag: String, requestCode: String, t: T) {
-        EventManager.post(tag, requestCode, t, false)
+        EventManager.post(tag, requestCode, t)
     }
 
-    @JvmStatic
-    fun <T> postSticky(tag: String, t: T) {
-        EventManager.post(tag, "", t, true)
-    }
-
-    @JvmStatic
-    fun <T> postSticky(tag: String, requestCode: String, t: T) {
-        EventManager.post(tag, requestCode, t, true)
-    }
 }

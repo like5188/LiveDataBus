@@ -11,7 +11,11 @@ object EventManager {
     fun isRegistered(host: Any) = eventList.any { it.host == host }
 
     fun <T> observe(host: Any, owner: LifecycleOwner, tag: String, requestCode: String, isSticky: Boolean, observer: Observer<T>) {
-        val liveData = getLiveDataIfNullCreate<T>(tag, requestCode, isSticky)
+        // LiveData由tag、requestCode组合决定
+        val liveData = getLiveDataIfNullCreate<T>(tag, requestCode)
+        // 设置mSetValue标记为isSticky。即当isSticky为true时。则会在注册的时候就收到之前发送的最新一条消息。当为false时，则不会收到消息。
+        liveData.mSetValue = isSticky
+
         val busObserverWrapper = BusObserverWrapper(host, tag, requestCode, observer, liveData)
         val event = Event(host, owner, tag, requestCode, busObserverWrapper, liveData)
         // event由host、tag、requestCode组合决定
@@ -24,9 +28,9 @@ object EventManager {
         logHostOwnerEventDetails()
     }
 
-    fun <T> post(tag: String, requestCode: String, t: T, isSticky: Boolean) {
+    fun <T> post(tag: String, requestCode: String, t: T) {
         val requestCodeLogMessage = if (requestCode.isNotEmpty()) ", requestCode='$requestCode'" else ""
-        val liveData = getLiveData<T>(tag, requestCode, isSticky)
+        val liveData = getLiveData<T>(tag, requestCode)
         if (liveData != null) {
             if (Looper.getMainLooper() == Looper.myLooper()) {
                 Log.v(LiveDataBus.TAG, "在主线程发送消息 --> tag=$tag$requestCodeLogMessage，内容=$t")
@@ -58,23 +62,21 @@ object EventManager {
     }
 
     /**
-     * LiveData由tag、requestCode组合决定
+     * 获取缓存的LiveData对象，如果没有缓存，则创建。用于注册时
      */
-    private fun <T> getLiveDataIfNullCreate(tag: String, requestCode: String, isSticky: Boolean): BusLiveData<T> {
-        return getLiveData(tag, requestCode, isSticky) ?: BusLiveData()
+    private fun <T> getLiveDataIfNullCreate(tag: String, requestCode: String): BusLiveData<T> {
+        return getLiveData(tag, requestCode) ?: BusLiveData()
     }
 
     /**
-     * LiveData由tag、requestCode组合决定
+     * 获取缓存的LiveData对象。用于发送消息时
      */
-    private fun <T> getLiveData(tag: String, requestCode: String, isSticky: Boolean): BusLiveData<T>? {
+    private fun <T> getLiveData(tag: String, requestCode: String): BusLiveData<T>? {
         val filter = eventList.filter {
             it.tag == tag && it.requestCode == requestCode
         }
         return if (filter.isNotEmpty()) {
-            val liveData = filter[0].liveData
-            liveData.mNeedCurrentDataWhenFirstObserve = isSticky
-            liveData as BusLiveData<T>
+            filter[0].liveData as BusLiveData<T>
         } else {
             null
         }
