@@ -25,6 +25,7 @@ fun Any.liveDataBusRegister(owner: LifecycleOwner) {
 
 object LiveDataBus {
     const val TAG = "LiveDataBus"
+    private val mNoObserverParams = NoObserverParams()
     private val mBridge = Bridge()
 
     /**
@@ -58,6 +59,11 @@ object LiveDataBus {
         }
         Log.i(LiveDataBus.TAG, "注册宿主：$host")
         mBridge.register(host, owner)
+    }
+
+    @JvmStatic
+    fun post(tag: String) {
+        EventManager.post(tag, "", mNoObserverParams)
     }
 
     @JvmStatic

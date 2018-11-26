@@ -15,7 +15,7 @@ class BusObserverWrapper<T>(val host: Any,
             try {
                 observer.onChanged(t)
             } catch (e: Exception) {
-                Log.e(LiveDataBus.TAG, "发送消息失败：发送的数据类型和接收的数据类型不一致。host=$host，tag=$tag，requestCode=$requestCode")
+                Log.e(LiveDataBus.TAG, "发送消息失败：发送的数据类型和接收的数据类型不一致。host=$host，tag=$tag，requestCode=$requestCode Exception=$e")
             }
         }
     }

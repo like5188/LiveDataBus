@@ -14,11 +14,11 @@
 2、通过`@BusObserver`注解方法来接收消息。
 
     ①、此注解中可以设置tag、requestCode、Sticky三个参数。
-    ②、当tag相同时，可以用requestCode来区分。requestCode相当于常用的请求码。
+    ②、当tag相同时，可以用requestCode来区分。
     ③、sticky只是针对`@BusObserver`注解的接收消息的方法。发送消息时不区分粘性或者非粘性消息。sticky为true时表示会收到注册之前发送过的最新一条消息。
     ④、此方法是在主线程中调用的。
     ⑤、此方法只能使用public void修饰（kotlin中只能使用fun修饰），且参数只能是1个。
-    ⑥、必须要tag、requestCode、参数类型，这三项与发送消息完全一致，才能接收到消息。
+    ⑥、必须要tag、requestCode、参数类型，这三项与发送的消息完全一致，才能接收到消息。
 
 3、同一个宿主只能注册一次（重复注册只有第一次有效）、同一个宿主中不能有相同的tag+requestCode（重复了就只有第一个有效）。
 
@@ -56,6 +56,7 @@
 
 3、发送消息。
 ```java
+    LiveDataBus.post(tag: String)
     LiveDataBus.post(tag: String, t: T)
     LiveDataBus.post(tag: String, requestCode: String, t: T)
 ```
@@ -63,14 +64,29 @@
 4、接收消息与发送消息一一对应。
 ```java
     发送消息：
-    LiveDataBus.post(tag: String, t: T)
+    LiveDataBus.post(tag: String)
     
+    接收消息：
+    // java
+    @BusObserver("tag")
+    public void test() {
+    }
+    
+   // kotlin
+   @BusObserver(["tag"])
+    fun test() {
+    }
+```
+```java
+    发送消息：
+    LiveDataBus.post(tag: String, t: T)
+
     接收消息：
     // java
     @BusObserver("tag")
     public void test(T t) {
     }
-    
+
    // kotlin
    @BusObserver(["tag"])
     fun test(t: T) {

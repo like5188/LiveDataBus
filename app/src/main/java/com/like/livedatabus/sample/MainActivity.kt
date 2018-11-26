@@ -29,8 +29,8 @@ class MainActivity : BaseActivity() {
     }
 
     @BusObserver(["like1", "like2"], requestCode = "1")
-    fun observer1(i: Int) {
-        Log.e("LiveDataBus", "MainActivity observer1 tag=like1，数据：$i")
+    fun observer1() {
+        Log.e("LiveDataBus", "MainActivity observer1 tag=like1 requestCode=1")
     }
 
     @BusObserver(["like1"])
@@ -39,7 +39,7 @@ class MainActivity : BaseActivity() {
     }
 
     fun changeData1(view: View) {
-        LiveDataBus.post("like1", 1)
+        LiveDataBus.post("like1", null)
     }
 
     fun changeData2(view: View) {

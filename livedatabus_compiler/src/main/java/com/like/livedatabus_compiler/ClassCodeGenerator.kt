@@ -30,6 +30,7 @@ class ClassCodeGenerator {
         private val OBSERVER = ClassName.get("android.arch.lifecycle", "Observer")
         private val LIFECYCLE_OWNER = ClassName.get("android.arch.lifecycle", "LifecycleOwner")
         private val OBJECT = ClassName.get("java.lang", "Object")
+        private val NO_OBSERVER_PARAMS = ClassName.get("com.like.livedatabus", "NoObserverParams")
     }
 
     private var mPackageName = ""// 生成的类的包名
@@ -114,23 +115,33 @@ class ClassCodeGenerator {
      */
     private fun createObserverParam(methodInfo: MethodInfo): TypeSpec {
         // 获取onChanged方法的参数类型
-        val paramType = methodInfo.paramType
-        var typeName: TypeName
-        if (paramType!!.kind.isPrimitive) {
-            typeName = TypeName.get(paramType)
-            if (!typeName.isBoxedPrimitive)
-                typeName = typeName.box()
-        } else
-            typeName = ClassName.get(paramType)
-        print("onChanged方法的参数类型：$typeName")
+        var typeName: TypeName = NO_OBSERVER_PARAMS
+        methodInfo.paramType?.let {
+            if (it.kind.isPrimitive) {
+                typeName = TypeName.get(it)
+                if (!typeName.isBoxedPrimitive)// 如果是装箱数据类型
+                    typeName = typeName.box()
+            } else
+                typeName = ClassName.get(it)
+        }
 
         // 创建onChanged方法
         val methodBuilder = MethodSpec.methodBuilder("onChanged")
                 .addAnnotation(Override::class.java)
                 .addModifiers(Modifier.PUBLIC)
         methodBuilder.addParameter(typeName, "t")
+        // 如果typeName为NO_OBSERVER_PARAMS，则说明被@BusObserver注解的方法没有参数。
         // ((MainViewModel) host).method(s);
-        methodBuilder.addStatement("((${mHostClassName?.simpleName()}) host).${methodInfo.methodName}(t)")
+        val callbackStatement = "((${mHostClassName?.simpleName()}) host).${methodInfo.methodName}(${if (typeName == NO_OBSERVER_PARAMS) "" else "t"});"
+        methodBuilder.addStatement(
+                // 当参数为NO_OBSERVER_PARAMS时，代表被@BusObserver注解的方法没有参数。
+                if (typeName == NO_OBSERVER_PARAMS) {
+                    // 为了和其它参数（可为null）区分开，需要判断null
+                    "if (t != null) {$callbackStatement}"
+                } else {
+                    callbackStatement
+                }
+        )
         // 创建匿名内部类
         return TypeSpec.anonymousClassBuilder("")
                 .addSuperinterface(ParameterizedTypeName.get(OBSERVER, typeName))
@@ -149,9 +160,18 @@ class ClassCodeGenerator {
 
         val busObserverAnnotationClass = BusObserver::class.java
         val methodInfo = MethodInfo()
-        methodInfo.methodName = element.simpleName.toString()
         methodInfo.tag = element.getAnnotation(busObserverAnnotationClass).value
         methodInfo.requestCode = element.getAnnotation(busObserverAnnotationClass).requestCode
+
+        // 判断是否有重复的tag + requestCode
+        if (methodInfo.tag == null) return
+        val isRepeat = mMethodInfoList.any {
+            it.tag?.intersect(methodInfo.tag!!.toList())?.isNotEmpty() ?: false &&
+                    it.requestCode == methodInfo.requestCode
+        }
+        if (isRepeat) return
+
+        methodInfo.methodName = element.simpleName.toString()
         methodInfo.isSticky = element.getAnnotation(busObserverAnnotationClass).isSticky
 
         val executableElement = element as ExecutableElement
