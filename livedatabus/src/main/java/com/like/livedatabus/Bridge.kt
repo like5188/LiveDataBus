@@ -12,7 +12,7 @@ open class Bridge {
     /**
      * 注册宿主及其父类
      */
-    fun register(host: Any, owner: LifecycleOwner) {
+    fun register(host: Any, owner: LifecycleOwner? = null) {
         try {
             registerAllHierarchyFromOwner(host, owner, host.javaClass)
         } catch (e: Exception) {
@@ -27,7 +27,7 @@ open class Bridge {
      * @throws Exception
      */
     @Throws(Exception::class)
-    private fun registerAllHierarchyFromOwner(host: Any, owner: LifecycleOwner, clazz: Class<*>?) {
+    private fun registerAllHierarchyFromOwner(host: Any, owner: LifecycleOwner?, clazz: Class<*>?) {
         clazz ?: return
         Log.v(LiveDataBus.TAG, "registerAllHierarchyFromOwner --> $clazz")
         // 查找自动生成的代理类，此类继承Bridge类
@@ -54,7 +54,7 @@ open class Bridge {
     /**
      * 自动生成代码时重写此方法，方法体是对entity中所有注册的tag进行observe()方法的调用
      */
-    protected open fun autoGenerate(host: Any, owner: LifecycleOwner) {
+    protected open fun autoGenerate(host: Any, owner: LifecycleOwner?) {
     }
 
     /**
@@ -62,7 +62,6 @@ open class Bridge {
      */
     protected fun <T> observe(host: Any?, owner: LifecycleOwner?, tag: String?, requestCode: String?, isSticky: Boolean?, observer: Observer<T>?) {
         host ?: return
-        owner ?: return
         tag ?: return
         requestCode ?: return
         isSticky ?: return

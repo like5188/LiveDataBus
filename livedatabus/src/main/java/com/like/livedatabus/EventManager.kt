@@ -10,7 +10,7 @@ object EventManager {
 
     fun isRegistered(host: Any) = eventList.any { it.host == host }
 
-    fun <T> observe(host: Any, owner: LifecycleOwner, tag: String, requestCode: String, isSticky: Boolean, observer: Observer<T>) {
+    fun <T> observe(host: Any, owner: LifecycleOwner?, tag: String, requestCode: String, isSticky: Boolean, observer: Observer<T>) {
         // LiveData由tag、requestCode组合决定
         val liveData = getLiveDataIfNullCreate<T>(tag, requestCode)
         // 设置mSetValue标记为isSticky。即当isSticky为true时。则会在注册的时候就收到之前发送的最新一条消息。当为false时，则不会收到消息。
@@ -41,6 +41,12 @@ object EventManager {
             }
         } else {
             Log.e(LiveDataBus.TAG, "发送消息失败，没有订阅事件： --> tag=$tag$requestCodeLogMessage")
+        }
+    }
+
+    fun removeObserver(tag: String, requestCode: String) {
+        eventList.filter { it.tag == tag && it.requestCode == requestCode }.forEach {
+            it.removeObserver()
         }
     }
 
@@ -92,7 +98,7 @@ object EventManager {
         val hosts = eventList.distinctBy { it.host }.map { it.host::class.java.simpleName }
         Log.d(LiveDataBus.TAG, "宿主总数：${hosts.size}${if (hosts.isEmpty()) "" else "，包含：$hosts"}")
 
-        val owners = eventList.distinctBy { it.owner }.map { it.owner::class.java.simpleName }
+        val owners = eventList.distinctBy { it.owner }.map { if (it.owner != null) it.owner::class.java.simpleName else "null" }
         Log.d(LiveDataBus.TAG, "宿主所属生命周期类总数：${owners.size}${if (owners.isEmpty()) "" else "，包含：$owners"}")
     }
 
