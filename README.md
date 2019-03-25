@@ -109,9 +109,3 @@
     fun test(t: T) {
     }
 ```
-
-5、Proguard
-```java
-    -keep class * extends com.like.livedatabus.Bridge
-    -keep class com.like.livedatabus_annotations.**{*;}
-```
