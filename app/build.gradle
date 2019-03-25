@@ -62,10 +62,10 @@ dependencies {
     implementation 'com.android.support:appcompat-v7:28.0.0'
     implementation 'com.android.support.constraint:constraint-layout:1.1.3'
 
-    debugImplementation project(':livedatabus')// debug 版本直接引用本地项目
-    debugImplementation project(':livedatabus_annotations')// debug 版本直接引用本地项目
-    releaseImplementation 'com.github.like5188.LiveDataBus:livedatabus:1.2.4'// release 版本引用远程版本用来最终测试发现问题
-//    kapt project(':livedatabus_compiler')
+    implementation project(':livedatabus')// debug 版本直接引用本地项目
+    implementation project(':livedatabus_annotations')// debug 版本直接引用本地项目
+//    releaseImplementation 'com.github.like5188.LiveDataBus:livedatabus:1.2.5'// release 版本引用远程版本用来最终测试发现问题
+    kapt project(':livedatabus_compiler')
 
-    kapt 'com.github.like5188.LiveDataBus:livedatabus_compiler:1.2.4'
+//    kapt 'com.github.like5188.LiveDataBus:livedatabus_compiler:1.2.5'
 }
