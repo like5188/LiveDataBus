@@ -64,8 +64,8 @@ dependencies {
 
     implementation project(':livedatabus')// debug 版本直接引用本地项目
     implementation project(':livedatabus_annotations')// debug 版本直接引用本地项目
-//    releaseImplementation 'com.github.like5188.LiveDataBus:livedatabus:1.2.5'// release 版本引用远程版本用来最终测试发现问题
+//    releaseImplementation 'com.github.like5188.LiveDataBus:livedatabus:1.2.6'// release 版本引用远程版本用来最终测试发现问题
     kapt project(':livedatabus_compiler')
 
-//    kapt 'com.github.like5188.LiveDataBus:livedatabus_compiler:1.2.5'
+//    kapt 'com.github.like5188.LiveDataBus:livedatabus_compiler:1.2.6'
 }
