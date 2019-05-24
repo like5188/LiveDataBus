@@ -34,10 +34,10 @@ object LiveDataBus {
     @JvmOverloads
     fun register(host: Any, owner: LifecycleOwner? = null) {
         if (EventManager.isRegistered(host)) {
-            Log.e(LiveDataBus.TAG, "已经注册过宿主：$host")
+            Log.e(TAG, "已经注册过宿主：$host")
             return
         }
-        Log.i(LiveDataBus.TAG, "注册宿主：$host")
+        Log.i(TAG, "注册宿主：$host")
         mBridge.register(host, owner)
     }
 
