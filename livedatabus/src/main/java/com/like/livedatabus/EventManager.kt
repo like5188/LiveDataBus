@@ -46,7 +46,7 @@ object EventManager {
 
     fun removeObserver(tag: String, requestCode: String) {
         eventList.filter { it.tag == tag && it.requestCode == requestCode }.forEach {
-            it.removeObserver()
+            it.removeObserver()// 此方法最终会调用 fun <T> removeObserver(observer: Observer<T>) 方法
         }
     }
 
