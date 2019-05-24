@@ -38,7 +38,7 @@ public class SecondActivity extends AppCompatActivity {
         LiveDataBus.post("like2", new User("name", 18));
     }
 
-    @BusObserver(value = "like1", requestCode = "re", isSticky = true)
+    @BusObserver(value = "like1", isSticky = true)
     public void observer1(int i) {
         Log.e("LiveDataBus", "SecondActivity onChanged tag=like1");
         mBinding.tv1.setText(String.valueOf(i));
