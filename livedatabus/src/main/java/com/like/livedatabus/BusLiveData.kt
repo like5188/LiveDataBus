@@ -1,6 +1,5 @@
 package com.like.livedatabus
 
-import android.arch.lifecycle.LifecycleOwner
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.Observer
 
@@ -50,11 +49,6 @@ class BusLiveData<T> : MutableLiveData<T>() {
     override fun removeObserver(observer: Observer<T>) {
         super.removeObserver(observer)
         EventManager.removeObserver(observer)
-    }
-
-    override fun removeObservers(owner: LifecycleOwner) {
-        super.removeObservers(owner)
-        EventManager.removeObservers(owner)
     }
 
 }

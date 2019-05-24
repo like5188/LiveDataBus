@@ -61,12 +61,6 @@ object EventManager {
         logHostOwnerEventDetails()
     }
 
-    fun removeObservers(owner: LifecycleOwner) {
-        eventList.removeAll { it.owner == owner }
-        Log.i(LiveDataBus.TAG, "取消宿主生命周期类相关的所有观察者：$owner")
-        logHostOwnerEventDetails()
-    }
-
     /**
      * 获取缓存的LiveData对象，如果没有缓存，则创建。用于注册时
      */
