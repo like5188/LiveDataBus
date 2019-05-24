@@ -1,6 +1,7 @@
 package com.like.livedatabus
 
 import android.arch.lifecycle.LifecycleOwner
+import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.Observer
 
 class Event<T>(
@@ -9,7 +10,7 @@ class Event<T>(
         val tag: String,// 标签
         val requestCode: String,// 请求码。当标签相同时，可以使用请求码区分
         val observer: Observer<T>,// 数据改变监听器
-        val liveData: BusLiveData<T>
+        val liveData: LiveData<T>
 ) {
 
     init {
