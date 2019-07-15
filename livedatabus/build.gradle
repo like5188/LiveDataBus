@@ -16,7 +16,12 @@ android {
 
     buildTypes {
         release {
-            consumerProguardFiles 'proguard-rules.pro'
+            consumerProguardFiles file('.').listFiles(new FilenameFilter() {
+                @Override
+                boolean accept(File file, String s) {
+                    return s.endsWith('.pro')
+                }
+            })
         }
     }
 
