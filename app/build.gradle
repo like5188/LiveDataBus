@@ -66,6 +66,6 @@ dependencies {
     implementation project(':livedatabus_annotations')
     kapt project(':livedatabus_compiler')
 
-//    implementation 'com.github.like5188.LiveDataBus:livedatabus:1.2.7'
-//    kapt 'com.github.like5188.LiveDataBus:livedatabus_compiler:1.2.7'
+//    implementation 'com.github.like5188.LiveDataBus:livedatabus:版本号'
+//    kapt 'com.github.like5188.LiveDataBus:livedatabus_compiler:版本号'
 }
