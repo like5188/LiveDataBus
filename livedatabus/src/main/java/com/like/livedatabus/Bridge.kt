@@ -1,7 +1,7 @@
 package com.like.livedatabus
 
-import android.arch.lifecycle.LifecycleOwner
-import android.arch.lifecycle.Observer
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.Observer
 import android.util.Log
 import java.lang.Exception
 

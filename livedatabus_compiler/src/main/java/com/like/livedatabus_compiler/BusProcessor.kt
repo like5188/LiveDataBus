@@ -17,8 +17,8 @@ class BusProcessor : AbstractProcessor() {
     }
 
     /**
-     * init()方法会被注解处理工具调用，并输入ProcessingEnviroment参数。
-     * ProcessingEnviroment提供很多有用的工具类Elements, Types 和 Filer
+     * init()方法会被注解处理工具调用，并输入ProcessingEnvironment参数。
+     * ProcessingEnvironment提供很多有用的工具类Elements, Types 和 Filer
      *
      * @param processingEnv 提供给 processor 用来访问工具框架的环境
      */

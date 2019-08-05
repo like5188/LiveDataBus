@@ -27,8 +27,8 @@ class ClassCodeGenerator {
         private const val CLASS_UNIFORM_MARK = "_Proxy"
         // 因为java工程中没有下面这些类(Android中的类)，所以只能采用ClassName的方式。
         private val BRIDGE = ClassName.get("com.like.livedatabus", "Bridge")
-        private val OBSERVER = ClassName.get("android.arch.lifecycle", "Observer")
-        private val LIFECYCLE_OWNER = ClassName.get("android.arch.lifecycle", "LifecycleOwner")
+        private val OBSERVER = ClassName.get("androidx.lifecycle", "Observer")
+        private val LIFECYCLE_OWNER = ClassName.get("androidx.lifecycle", "LifecycleOwner")
         private val OBJECT = ClassName.get("java.lang", "Object")
         private val NO_OBSERVER_PARAMS = ClassName.get("com.like.livedatabus", "NoObserverParams")
     }

@@ -27,7 +27,7 @@ object ProcessUtils {
      * 判断该元素的上层元素是否符合目标元素的上层元素
      * <p>
      * 判断宿主类是否为类，而且是否为public修饰
-     * 然后判断包名，android.和java.开头的不行
+     * 然后判断包名，android.、androidx.、java.、javax.开头的不用去判断，因为是系统的类，不可能有BusObserver注解。
      *
      * @param element
      * @return
@@ -43,8 +43,12 @@ object ProcessUtils {
             return false
         }
         val qualifiedName = encloseingElement.qualifiedName.toString()
-        if (qualifiedName.startsWith("android.") || qualifiedName.startsWith("java.")) {
-            error(element, "%s 类的名称不能以`android.`或者`java.`开头", element.simpleName.toString())
+        if (qualifiedName.startsWith("android.") ||
+                qualifiedName.startsWith("androidx.") ||
+                qualifiedName.startsWith("java.") ||
+                qualifiedName.startsWith("javax.")
+        ) {
+            error(element, "%s 类的名称不能以`android.`、`androidx.`、`java.`、`javax.`开头", element.simpleName.toString())
             return false
         }
         return true
@@ -84,7 +88,7 @@ object ProcessUtils {
             String.format(format, *args)
         else
             format
-        ProcessUtils.messager?.printMessage(Diagnostic.Kind.ERROR, f, element)
+        messager?.printMessage(Diagnostic.Kind.ERROR, f, element)
     }
 
 }

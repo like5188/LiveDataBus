@@ -1,6 +1,6 @@
 package com.like.livedatabus
 
-import android.arch.lifecycle.LifecycleOwner
+import androidx.lifecycle.LifecycleOwner
 import android.util.Log
 
 /**

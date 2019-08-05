@@ -1,6 +1,6 @@
 package com.like.livedatabus
 
-import android.arch.lifecycle.Observer
+import androidx.lifecycle.Observer
 import android.util.Log
 
 class BusObserverWrapper<T>(val host: Any,

@@ -1,12 +1,12 @@
 package com.like.livedatabus
 
-import android.arch.lifecycle.MutableLiveData
-import android.arch.lifecycle.Observer
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Observer
 
 /**
  * 解决问题：在使用这个LiveDataBus的过程中，订阅者会收到订阅之前发布的消息。
  *
- * 原因：对于LiveData，其初始的version是-1，当我们调用了其setValue或者postValue，其vesion会+1；
+ * 原因：对于LiveData，其初始的version是-1，当我们调用了其setValue或者postValue，其version会+1；
  * 对于每一个观察者的封装ObserverWrapper，其初始version也为-1，也就是说，每一个新注册的观察者，其version为-1；
  * 当LiveData设置这个ObserverWrapper的时候，如果LiveData的version大于ObserverWrapper的version，
  * LiveData就会强制把当前value推送给Observer。
@@ -46,7 +46,7 @@ class BusLiveData<T> : MutableLiveData<T>() {
         super.postValue(value)
     }
 
-    override fun removeObserver(observer: Observer<T>) {
+    override fun removeObserver(observer: Observer<in T>) {
         super.removeObserver(observer)
         EventManager.removeObserver(observer)
     }
