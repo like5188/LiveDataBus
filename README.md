@@ -39,6 +39,8 @@
 ```groovy
     dependencies {
         implementation 'com.github.like5188.LiveDataBus:livedatabus:版本号'
+        // gradle 3.2.1 不需要添加这个引用 ， 升级到 3.5.2 后必须添加 ， 否则会提示找不到livedatabus_annotations中的类 。
+        implementation 'com.github.like5188.LiveDataBus:livedatabus_annotations:版本号'
         kapt 'com.github.like5188.LiveDataBus:livedatabus_compiler:版本号'
     }
 ```
