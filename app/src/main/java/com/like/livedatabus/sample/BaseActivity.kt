@@ -1,16 +1,16 @@
 package com.like.livedatabus.sample
 
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
 import android.util.Log
-import com.like.livedatabus.liveDataBusRegister
+import androidx.appcompat.app.AppCompatActivity
+import com.like.livedatabus.liveDataBusRegisterByUniqueClass
 import com.like.livedatabus_annotations.BusObserver
 
 open class BaseActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        liveDataBusRegister()
+        liveDataBusRegisterByUniqueClass()
     }
 
     @BusObserver(["like3"])

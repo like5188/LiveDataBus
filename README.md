@@ -47,12 +47,8 @@
 
 2、在需要接收消息的类的初始化方法（通常为构造函数）中调用`register`方法进行注册宿主。当在父类调用`register`方法后，在子类中无需再调用。
 ```java
-    LiveDataBus.register(host: Any, owner: LifecycleOwner? = null)
-    // 当注册时参数owner为null时，不会自动关联生命周期，必须显示调用下面的方法取消注册；不为null时会自动关联生命周期，不用调用取消注册的方法。
-    LiveDataBus.unregister(tag: String, requestCode: String = "")
-
-    // kotlin
-    liveDataBusRegister(owner: LifecycleOwner? = null)
+    liveDataBusRegisterByUniqueInstance(owner: LifecycleOwner? = null)
+    liveDataBusRegisterByUniqueClass(owner: LifecycleOwner? = null)
     // 当注册时参数owner为null时，不会自动关联生命周期，必须显示调用下面的方法取消注册；不为null时会自动关联生命周期，不用调用取消注册的方法。
     liveDataBusUnRegister(tag: String, requestCode: String = "")
 ```
@@ -110,3 +106,6 @@
     fun test(t: T) {
     }
 ```
+
+5、混淆。
+    1、调用注册方法的宿主类不能混淆

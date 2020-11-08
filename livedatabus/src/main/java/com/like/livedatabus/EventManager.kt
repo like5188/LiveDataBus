@@ -1,14 +1,16 @@
 package com.like.livedatabus
 
-import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.Observer
 import android.os.Looper
 import android.util.Log
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.Observer
 
 object EventManager {
     private val eventList = mutableListOf<Event<*>>()
 
-    fun isRegistered(host: Any) = eventList.any { it.host == host }
+    fun containsHostInstance(host: Any) = eventList.any { it.host == host }
+
+    fun containsHostClass(clazz: Class<*>) = eventList.any { it.host.javaClass == clazz }
 
     fun <T> observe(host: Any, owner: LifecycleOwner?, tag: String, requestCode: String, isSticky: Boolean, observer: Observer<T>) {
         // LiveData由tag、requestCode组合决定

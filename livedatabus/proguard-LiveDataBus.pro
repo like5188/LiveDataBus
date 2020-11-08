@@ -20,6 +20,6 @@
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
 
-#livedatabus
+#livedatabus 注意：调用注册方法的宿主类不能混淆
 -keep class * extends com.like.livedatabus.Bridge
 -keep class com.like.livedatabus_annotations.**{*;}

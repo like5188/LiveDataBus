@@ -1,13 +1,13 @@
 package com.like.livedatabus.sample
 
 import android.util.Log
-import com.like.livedatabus.liveDataBusRegister
+import com.like.livedatabus.liveDataBusRegisterByUniqueInstance
 import com.like.livedatabus_annotations.BusObserver
 
-class MainViewModel(val activity: MainActivity) {
+class MainViewModel(private val activity: MainActivity) {
 
     init {
-        liveDataBusRegister(activity)
+        liveDataBusRegisterByUniqueInstance(activity)
     }
 
     @BusObserver(["like4"])
