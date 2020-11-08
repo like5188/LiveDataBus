@@ -8,9 +8,7 @@ import androidx.lifecycle.Observer
 object EventManager {
     private val eventList = mutableListOf<Event<*>>()
 
-    fun containsHostInstance(host: Any) = eventList.any { it.host == host }
-
-    fun containsHostClass(clazz: Class<*>) = eventList.any { it.host.javaClass == clazz }
+    fun isRegistered(host: Any) = eventList.any { it.host == host }
 
     fun <T> observe(host: Any, owner: LifecycleOwner?, tag: String, requestCode: String, isSticky: Boolean, observer: Observer<T>) {
         // LiveData由tag、requestCode组合决定

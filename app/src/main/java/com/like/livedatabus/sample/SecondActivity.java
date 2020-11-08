@@ -19,7 +19,7 @@ public class SecondActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mBinding = DataBindingUtil.setContentView(this, R.layout.activity_second);
-        LiveDataBus.registerByUniqueInstance(this);
+        LiveDataBus.register(this);
         Log.e("LiveDataBus", "SecondActivity onCreate");
     }
 
