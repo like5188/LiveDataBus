@@ -1,5 +1,7 @@
 apply plugin: 'java-library'
 apply plugin: 'kotlin'
+apply plugin: 'com.github.dcendents.android-maven'// 上传jitPack
+group = 'com.github.like5188'// 上传jitPack
 
 dependencies {
     compileOnly 'com.squareup:javapoet:1.11.0'// 自动生成源码的库

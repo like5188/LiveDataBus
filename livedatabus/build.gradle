@@ -1,6 +1,8 @@
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
+apply plugin: 'com.github.dcendents.android-maven'// 上传jitPack
+group = 'com.github.like5188'// 上传jitPack
 
 android {
     compileSdkVersion 30
