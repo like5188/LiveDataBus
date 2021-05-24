@@ -107,9 +107,8 @@
 ```
 
 5、混淆。
-    1、调用注册方法的宿主类不能混淆，需要使用它的类名。
 ```java
-    比如：
+    调用注册方法的宿主类不能混淆，需要使用它的类名。比如：
     -keepnames class com.like.livedatabus.sample.BaseActivity
     -keepnames class com.like.livedatabus.sample.MainViewModel
 ```
