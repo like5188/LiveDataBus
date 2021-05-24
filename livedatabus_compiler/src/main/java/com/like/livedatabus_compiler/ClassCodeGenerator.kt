@@ -38,7 +38,6 @@ class ClassCodeGenerator {
     private val mMethodInfoList = mutableSetOf<MethodInfo>()// 类中的所有方法
 
     fun create() {
-        println(mHostClass?.typeParameters?.get(0)?.bounds?.get(0)?.javaClass?.name)
         if (mHostClass == null || mMethodInfoList.isEmpty()) {
             return
         }
