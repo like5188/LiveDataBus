@@ -3,12 +3,6 @@ package com.like.livedatabus
 import android.util.Log
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
-import java.lang.Exception
-import kotlin.Any
-import kotlin.Boolean
-import kotlin.String
-import kotlin.Throws
-import kotlin.let
 
 /**
  * 连接LiveDataBus和自动生成的代码的桥梁
@@ -53,6 +47,7 @@ open class Bridge {
             && !superClass.name.startsWith("android.")
             && !superClass.name.startsWith("androidx.")
             && !superClass.name.startsWith("java.")
+            && !superClass.name.startsWith("javax.")
         ) {
             registerAllHierarchyFromOwner(host, owner, superClass)
         }
