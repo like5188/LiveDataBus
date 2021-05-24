@@ -6,20 +6,6 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.findViewTreeLifecycleOwner
 import com.like.livedatabus.LiveDataBus.unregister
 
-fun Any.liveDataBusRegister(
-    owner: LifecycleOwner? = when (this) {
-        is LifecycleOwner -> this
-        is View -> findViewTreeLifecycleOwner()
-        else -> null
-    }
-) {
-    LiveDataBus.register(this, owner)
-}
-
-fun Any.liveDataBusUnRegister() {
-    LiveDataBus.unregister(this)
-}
-
 object LiveDataBus {
     const val TAG = "LiveDataBus"
     private val mNoObserverParams = NoObserverParams()
@@ -34,7 +20,14 @@ object LiveDataBus {
      */
     @JvmStatic
     @JvmOverloads
-    fun register(host: Any, owner: LifecycleOwner? = null) {
+    fun register(
+        host: Any,
+        owner: LifecycleOwner? = when (host) {
+            is LifecycleOwner -> host
+            is View -> host.findViewTreeLifecycleOwner()
+            else -> null
+        }
+    ) {
         if (EventManager.isRegistered(host)) {
             Log.e(TAG, "已经注册过宿主：$host")
             return
