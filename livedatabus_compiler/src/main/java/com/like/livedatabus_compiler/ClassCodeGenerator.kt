@@ -25,6 +25,7 @@ public class MainViewModel_Proxy extends Bridge {
 class ClassCodeGenerator {
     companion object {
         private const val CLASS_UNIFORM_MARK = "_Proxy"
+
         // 因为java工程中没有下面这些类(Android中的类)，所以只能采用ClassName的方式。
         private val BRIDGE = ClassName.get("com.like.livedatabus", "Bridge")
         private val OBSERVER = ClassName.get("androidx.lifecycle", "Observer")
@@ -33,18 +34,17 @@ class ClassCodeGenerator {
         private val NO_OBSERVER_PARAMS = ClassName.get("com.like.livedatabus", "NoObserverParams")
     }
 
-    private var mPackageName = ""// 生成的类的包名
-    private var mHostClassName: ClassName? = null// 宿主的类名
+    private var mHostClass: TypeElement? = null// 宿主类
     private val mMethodInfoList = mutableSetOf<MethodInfo>()// 类中的所有方法
 
     fun create() {
-        if (mMethodInfoList.isEmpty() || mPackageName.isEmpty() || mHostClassName == null) {
+        if (mHostClass == null || mMethodInfoList.isEmpty()) {
             return
         }
         // 创建包名及类的注释
-        val javaFile = JavaFile.builder(mPackageName, createClass())
-                .addFileComment(" This codes are generated automatically by LiveDataBus. Do not modify!")// 类的注释
-                .build()
+        val javaFile = JavaFile.builder(ClassName.get(mHostClass).packageName(), createClass())
+            .addFileComment(" This codes are generated automatically by LiveDataBus. Do not modify!")// 类的注释
+            .build()
 
         try {
             javaFile.writeTo(ProcessUtils.filer)
@@ -60,11 +60,11 @@ class ClassCodeGenerator {
      * public class MainViewModel_Proxy extends Bridge {}
      */
     private fun createClass(): TypeSpec =
-            TypeSpec.classBuilder(mHostClassName?.simpleName() + CLASS_UNIFORM_MARK)
-                    .addModifiers(Modifier.PUBLIC, Modifier.FINAL)
-                    .superclass(BRIDGE)
-                    .addMethod(createMethod())
-                    .build()
+        TypeSpec.classBuilder(ClassName.get(mHostClass).simpleName() + CLASS_UNIFORM_MARK)
+            .addModifiers(Modifier.PUBLIC, Modifier.FINAL)
+            .superclass(BRIDGE)
+            .addMethod(createMethod())
+            .build()
 
     /**
      * 创建autoGenerate方法
@@ -74,10 +74,10 @@ class ClassCodeGenerator {
      */
     private fun createMethod(): MethodSpec {
         val builder = MethodSpec.methodBuilder("autoGenerate")
-                .addModifiers(Modifier.PUBLIC)
-                .addParameter(OBJECT, "host", Modifier.FINAL)
-                .addParameter(LIFECYCLE_OWNER, "owner", Modifier.FINAL)
-                .addAnnotation(Override::class.java)
+            .addModifiers(Modifier.PUBLIC)
+            .addParameter(OBJECT, "host", Modifier.FINAL)
+            .addParameter(LIFECYCLE_OWNER, "owner", Modifier.FINAL)
+            .addAnnotation(Override::class.java)
         for (binder in mMethodInfoList) {
             builder.addCode(createMethodCodeBlock(binder))
         }
@@ -96,7 +96,13 @@ class ClassCodeGenerator {
             val isSticky = methodInfo.isSticky
 
             val codeBlockBuilder = CodeBlock.builder()
-            codeBlockBuilder.addStatement("observe(host\n,owner\n,\$S\n,\$S\n,\$L\n,\$L)", it, requestCode, isSticky, createObserverParam(methodInfo))
+            codeBlockBuilder.addStatement(
+                "observe(host\n,owner\n,\$S\n,\$S\n,\$L\n,\$L)",
+                it,
+                requestCode,
+                isSticky,
+                createObserverParam(methodInfo)
+            )
             builder.add(codeBlockBuilder.build())
         }
         return builder.build()
@@ -127,35 +133,37 @@ class ClassCodeGenerator {
 
         // 创建onChanged方法
         val methodBuilder = MethodSpec.methodBuilder("onChanged")
-                .addAnnotation(Override::class.java)
-                .addModifiers(Modifier.PUBLIC)
+            .addAnnotation(Override::class.java)
+            .addModifiers(Modifier.PUBLIC)
         methodBuilder.addParameter(typeName, "t")
         // 如果typeName为NO_OBSERVER_PARAMS，则说明被@BusObserver注解的方法没有参数。
         // ((MainViewModel) host).method(s);
-        val callbackStatement = "((${mHostClassName?.simpleName()}) host).${methodInfo.methodName}(${if (typeName == NO_OBSERVER_PARAMS) "" else "t"});"
+        val callbackStatement =
+            "((${
+                ClassName.get(mHostClass).simpleName()
+            }) host).${methodInfo.methodName}(${if (typeName == NO_OBSERVER_PARAMS) "" else "t"});"
         methodBuilder.addStatement(
-                // 当参数为NO_OBSERVER_PARAMS时，代表被@BusObserver注解的方法没有参数。
-                if (typeName == NO_OBSERVER_PARAMS) {
-                    // 为了和其它参数（可为null）区分开，需要判断null
-                    "if (t != null) {$callbackStatement}"
-                } else {
-                    callbackStatement
-                }
+            // 当参数为NO_OBSERVER_PARAMS时，代表被@BusObserver注解的方法没有参数。
+            if (typeName == NO_OBSERVER_PARAMS) {
+                // 为了和其它参数（可为null）区分开，需要判断null
+                "if (t != null) {$callbackStatement}"
+            } else {
+                callbackStatement
+            }
         )
         // 创建匿名内部类
         return TypeSpec.anonymousClassBuilder("")
-                .addSuperinterface(ParameterizedTypeName.get(OBSERVER, typeName))
-                .addMethod(methodBuilder.build())
-                .build()
+            .addSuperinterface(ParameterizedTypeName.get(OBSERVER, typeName))
+            .addMethod(methodBuilder.build())
+            .build()
     }
 
     /**
      * 添加元素，用于生成类
      */
     fun addElement(element: Element) {
-        if (mHostClassName == null) {
-            mHostClassName = ClassName.get(element.enclosingElement as TypeElement)// getEnclosingElement()所在类的对象信息
-            mPackageName = mHostClassName!!.packageName()
+        if (mHostClass == null) {
+            mHostClass = element.enclosingElement as? TypeElement
         }
 
         val busObserverAnnotationClass = BusObserver::class.java
