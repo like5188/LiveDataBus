@@ -44,8 +44,8 @@ object EventManager {
         }
     }
 
-    fun removeObserver(tag: String, requestCode: String) {
-        eventList.filter { it.tag == tag && it.requestCode == requestCode }.forEach {
+    fun removeHost(host: Any) {
+        eventList.filter { it.host == host }.forEach {
             it.removeObserver()// 此方法最终会调用 fun <T> removeObserver(observer: Observer<T>) 方法
         }
     }
@@ -53,7 +53,8 @@ object EventManager {
     fun <T> removeObserver(observer: Observer<T>) {
         eventList.removeAll { it.observer == observer }
         if (observer is BusObserverWrapper) {
-            val logMessage = "Event(host=${observer.host::class.java.simpleName}, tag='${observer.tag}'${if (observer.requestCode.isNotEmpty()) ", requestCode='${observer.requestCode}'" else ""})"
+            val logMessage =
+                "Event(host=${observer.host::class.java.simpleName}, tag='${observer.tag}'${if (observer.requestCode.isNotEmpty()) ", requestCode='${observer.requestCode}'" else ""})"
             Log.i(LiveDataBus.TAG, "取消事件：$logMessage")
         } else {
             Log.i(LiveDataBus.TAG, "取消事件：$observer")

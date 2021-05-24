@@ -6,16 +6,18 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.findViewTreeLifecycleOwner
 import com.like.livedatabus.LiveDataBus.unregister
 
-fun View.liveDataBusRegister() {
-    LiveDataBus.register(this, findViewTreeLifecycleOwner())
-}
-
-fun Any.liveDataBusRegister(owner: LifecycleOwner? = null) {
+fun Any.liveDataBusRegister(
+    owner: LifecycleOwner? = when (this) {
+        is LifecycleOwner -> this
+        is View -> findViewTreeLifecycleOwner()
+        else -> null
+    }
+) {
     LiveDataBus.register(this, owner)
 }
 
-fun Any.liveDataBusUnRegister(tag: String, requestCode: String = "") {
-    LiveDataBus.unregister(tag, requestCode)
+fun Any.liveDataBusUnRegister() {
+    LiveDataBus.unregister(this)
 }
 
 object LiveDataBus {
@@ -42,12 +44,11 @@ object LiveDataBus {
     }
 
     /**
-     * 取消注册宿主及其所属的生命周期类
+     * 取消注册的宿主
      */
     @JvmStatic
-    @JvmOverloads
-    fun unregister(tag: String, requestCode: String = "") {
-        EventManager.removeObserver(tag, requestCode)
+    fun unregister(host: Any) {
+        EventManager.removeHost(host)
     }
 
     @JvmStatic

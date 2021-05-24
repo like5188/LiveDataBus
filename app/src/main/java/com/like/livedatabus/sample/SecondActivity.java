@@ -26,8 +26,7 @@ public class SecondActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        LiveDataBus.unregister("like1", "re");
-        LiveDataBus.unregister("like2", "re");
+        LiveDataBus.unregister(this);
         Log.e("LiveDataBus", "SecondActivity onDestroy");
     }
 

@@ -1,9 +1,14 @@
 package com.like.livedatabus
 
+import android.util.Log
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
-import android.util.Log
 import java.lang.Exception
+import kotlin.Any
+import kotlin.Boolean
+import kotlin.String
+import kotlin.Throws
+import kotlin.let
 
 /**
  * 连接LiveDataBus和自动生成的代码的桥梁
@@ -45,8 +50,10 @@ open class Bridge {
         // 继续查找并初始化父类宿主。这里过滤开始的字符，及过滤android和java系统自带的类。
         val superClass = clazz.superclass
         if (superClass != null
-                && !superClass.name.startsWith("android.")
-                && !superClass.name.startsWith("java.")) {
+            && !superClass.name.startsWith("android.")
+            && !superClass.name.startsWith("androidx.")
+            && !superClass.name.startsWith("java.")
+        ) {
             registerAllHierarchyFromOwner(host, owner, superClass)
         }
     }
@@ -60,7 +67,14 @@ open class Bridge {
     /**
      * 在代理类中重写autoGenerate方法，然后调用此方法进行注册
      */
-    protected fun <T> observe(host: Any?, owner: LifecycleOwner?, tag: String?, requestCode: String?, isSticky: Boolean?, observer: Observer<T>?) {
+    protected fun <T> observe(
+        host: Any?,
+        owner: LifecycleOwner?,
+        tag: String?,
+        requestCode: String?,
+        isSticky: Boolean?,
+        observer: Observer<T>?
+    ) {
         host ?: return
         tag ?: return
         requestCode ?: return
