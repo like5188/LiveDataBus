@@ -16,12 +16,6 @@ android {
     }
 
     signingConfigs {
-        debug {
-            storeFile file("../like.jks")
-            storePassword "like5488"
-            keyAlias "like"
-            keyPassword "like5488"
-        }
         release {
             storeFile file("../like.jks")
             storePassword "like5488"
@@ -31,14 +25,6 @@ android {
     }
 
     buildTypes {
-        debug {
-            minifyEnabled false
-            zipAlignEnabled false
-            shrinkResources false
-            debuggable true
-            signingConfig signingConfigs.debug
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-        }
         release {
             minifyEnabled true
             zipAlignEnabled true
