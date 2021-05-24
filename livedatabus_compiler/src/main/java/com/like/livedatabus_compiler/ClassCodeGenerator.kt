@@ -38,6 +38,7 @@ class ClassCodeGenerator {
     private val mMethodInfoList = mutableSetOf<MethodInfo>()// 类中的所有方法
 
     fun create() {
+        println(mHostClass?.typeParameters?.get(0)?.bounds?.get(0)?.javaClass?.name)
         if (mHostClass == null || mMethodInfoList.isEmpty()) {
             return
         }
@@ -59,12 +60,17 @@ class ClassCodeGenerator {
      *
      * public class MainViewModel_Proxy extends Bridge {}
      */
-    private fun createClass(): TypeSpec =
-        TypeSpec.classBuilder(ClassName.get(mHostClass).simpleName() + CLASS_UNIFORM_MARK)
+    private fun createClass(): TypeSpec {
+        val builder = TypeSpec.classBuilder(ClassName.get(mHostClass).simpleName() + CLASS_UNIFORM_MARK)
             .addModifiers(Modifier.PUBLIC, Modifier.FINAL)
             .superclass(BRIDGE)
             .addMethod(createMethod())
-            .build()
+        // 如果宿主类有泛型，也需要添加到代理类中。
+        mHostClass?.typeParameters?.forEach {
+            builder.addTypeVariable(TypeVariableName.get(it))
+        }
+        return builder.build()
+    }
 
     /**
      * 创建autoGenerate方法
@@ -165,6 +171,7 @@ class ClassCodeGenerator {
         if (mHostClass == null) {
             mHostClass = element.enclosingElement as? TypeElement
         }
+        mHostClass ?: return
 
         val busObserverAnnotationClass = BusObserver::class.java
         val methodInfo = MethodInfo()
