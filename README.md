@@ -44,7 +44,7 @@
         implementation 'com.github.like5188.LiveDataBus:livedatabus_annotations:版本号'
 
         kapt 'com.github.like5188.LiveDataBus:livedatabus_compiler:版本号'
-        compileOnly 'com.squareup:javapoet:1.11.0'// 自动生成源码的库
+        compileOnly 'com.squareup:javapoet:1.13.0'// 自动生成源码的库
     }
 ```
 
