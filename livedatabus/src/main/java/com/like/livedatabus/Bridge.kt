@@ -52,7 +52,7 @@ open class Bridge {
     }
 
     /**
-     * 自动生成代码时重写此方法，方法体是对entity中所有注册的tag进行observe()方法的调用
+     * 自动生成代码时重写此方法，方法体是对host中所有注册的tag进行observe()方法的调用
      */
     protected open fun autoGenerate(host: Any, owner: LifecycleOwner?) {
     }

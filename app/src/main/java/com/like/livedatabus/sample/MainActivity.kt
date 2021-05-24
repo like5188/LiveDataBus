@@ -1,10 +1,10 @@
 package com.like.livedatabus.sample
 
 import android.content.Intent
-import androidx.databinding.DataBindingUtil
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import androidx.databinding.DataBindingUtil
 import com.like.livedatabus.LiveDataBus
 import com.like.livedatabus.sample.databinding.ActivityMainBinding
 import com.like.livedatabus_annotations.BusObserver
@@ -32,13 +32,14 @@ class MainActivity : BaseActivity() {
         Log.e("LiveDataBus", "MainActivity observer1 tag=like1 requestCode=1")
     }
 
-    @BusObserver(["like1"])
-    fun observer2(s: Int) {
+    @BusObserver(["like1", "like2"])
+    fun observer2(s: Int?) {
         Log.e("LiveDataBus", "MainActivity observer2 tag=like1，数据：$s")
     }
 
     fun changeData1(view: View) {
-        LiveDataBus.post("like1", 123)
+        LiveDataBus.post("like1", null)
+        LiveDataBus.post("like2", 123)
     }
 
     fun changeData2(view: View) {

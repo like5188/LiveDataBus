@@ -1,8 +1,2 @@
 apply plugin: 'java-library'
 apply plugin: 'kotlin'
-
-dependencies {
-    compileOnly "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-}
-
-apply from: rootProject.file('./gradle-mvn-push.gradle')
