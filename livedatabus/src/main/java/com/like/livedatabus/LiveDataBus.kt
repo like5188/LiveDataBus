@@ -16,6 +16,7 @@ object LiveDataBus {
      *
      * @param host  宿主。注意：宿主类不能混淆。
      * @param owner 宿主所属的生命周期类。
+     * 如果是LifecycleOwner或者View类型，则不需要传递此参数，会自动获取它的LifecycleOwner。
      * 如果为 null，则会使用 liveData.observeForever(observer) 进行注册。那么就需要调用 [unregister] 方法取消注册。
      */
     @JvmStatic

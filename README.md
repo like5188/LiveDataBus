@@ -5,7 +5,7 @@
 最新版本|[![Download](https://jitpack.io/v/like5188/LiveDataBus.svg)](https://jitpack.io/#like5188/LiveDataBus)|[![Download](https://jitpack.io/v/like5188/LiveDataBus.svg)](https://jitpack.io/#like5188/LiveDataBus)
 
 ## 功能介绍
-1、该项目基于LiveData开发的。
+1、该项目基于LiveData开发的，LiveData的有点如下：
 
     ①、避免内存泄漏。观察者被绑定到组件的生命周期上，当被绑定的组件销毁（destroy）时，观察者会立刻自动清理自身的数据，使用者不用显示调用反注册方法。并且绑定生命周期后，组件在不活跃状态时，不会收到数据。当组件处于活跃状态或者从不活跃状态到活跃状态时总是能收到最新的数据。
     ②、解决Configuration Change问题。在屏幕发生旋转或者被回收再次启动，立刻就能收到最新的数据。
@@ -47,9 +47,9 @@
 
 2、在需要接收消息的类的初始化方法（通常为构造函数）中调用`register`方法进行注册宿主。当在父类调用`register`方法后，在子类中无需再调用。
 ```java
-    liveDataBusRegister(owner: LifecycleOwner? = null)
-    // 当注册时参数owner为null时，不会自动关联生命周期，必须显示调用下面的方法取消注册；不为null时会自动关联生命周期，不用调用取消注册的方法。
-    liveDataBusUnRegister(tag: String, requestCode: String = "")
+    LiveDataBus.register(host: Any, owner: LifecycleOwner?)//
+    // 当注册时参数owner不是LifecycleOwner或者View类型，或者为null时，不会自动关联生命周期，必须显示调用下面的方法取消注册；不为null时会自动关联生命周期，不用调用取消注册的方法。
+    LiveDataBus.unregister(host: Any)
 ```
 
 3、发送消息。
