@@ -38,6 +38,7 @@
 在Module的gradle中加入：
 ```groovy
     dependencies {
+        compileOnly 'com.squareup:javapoet:1.11.0'// 自动生成源码的库
         implementation 'com.github.like5188.LiveDataBus:livedatabus:版本号'
         // gradle 3.2.1 不需要添加这个引用 ， 升级到 3.5.2 后必须添加 ， 否则会提示找不到livedatabus_annotations中的类 。
         implementation 'com.github.like5188.LiveDataBus:livedatabus_annotations:版本号'
