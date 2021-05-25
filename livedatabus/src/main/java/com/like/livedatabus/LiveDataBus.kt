@@ -60,7 +60,7 @@ object LiveDataBus {
      * 查找并实例化由 javapoet 自动生成的代理类。并调用它们的 register 方法进行注册。
      *
      * @param host      宿主类
-     * @param clazz     需要查找是否有对应的代理类（"${clazz.name}_Proxy"）的类
+     * @param clazz     需要查找是否有 clazz 对应的代理类（"${clazz.name}_Proxy"）的类
      */
     private fun registerAllHierarchyFromOwner(host: Any, owner: LifecycleOwner?, clazz: Class<*>?) {
         clazz ?: return
