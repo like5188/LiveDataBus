@@ -8,8 +8,6 @@ import com.like.livedatabus.LiveDataBus.unregister
 
 object LiveDataBus {
     const val TAG = "LiveDataBus"
-    private val mNoObserverParams = NoObserverParams()
-    private val mBridge = Bridge()
 
     /**
      * 注册宿主及其所属的生命周期类
@@ -34,7 +32,7 @@ object LiveDataBus {
             return
         }
         Log.i(TAG, "注册宿主：$host")
-        mBridge.register(host, owner)
+        registerAllHierarchyFromOwner(host, owner, host.javaClass)
     }
 
     /**
@@ -47,7 +45,7 @@ object LiveDataBus {
 
     @JvmStatic
     fun post(tag: String) {
-        EventManager.post(tag, "", mNoObserverParams)
+        EventManager.post(tag, "", NoObserverParams())
     }
 
     @JvmStatic
@@ -60,4 +58,34 @@ object LiveDataBus {
         EventManager.post(tag, requestCode, t)
     }
 
+    /**
+     * 查找并实例化由 javapoet 自动生成的代理类。并调用它们的 autoGenerate 方法进行注册。
+     *
+     * @param host      宿主类
+     * @param clazz     需要查找是否有对应的代理类（"${clazz.name}_Proxy"）的类
+     */
+    private fun registerAllHierarchyFromOwner(host: Any, owner: LifecycleOwner?, clazz: Class<*>?) {
+        clazz ?: return
+        Log.v(TAG, "registerAllHierarchyFromOwner --> $clazz")
+        try {
+            // 查找并实例化由javapoet自动生成的代理类，此类继承自Bridge类。
+            Class.forName("${clazz.name}_Proxy")?.newInstance()?.apply {
+                if (this is Bridge) {
+                    autoGenerate(host, owner)
+                }
+            }
+        } catch (e: Exception) {
+        }
+        // 继续查找父类。这里过滤开始的字符，及过滤android和java系统自带的类。
+        clazz.superclass?.apply {
+            if (
+                !name.startsWith("android.") &&
+                !name.startsWith("androidx.") &&
+                !name.startsWith("java.") &&
+                !name.startsWith("javax.")
+            ) {
+                registerAllHierarchyFromOwner(host, owner, this)
+            }
+        }
+    }
 }
