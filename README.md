@@ -22,7 +22,7 @@
 3、被`@BusObserver`注解的方法所在类称为宿主类。
 
     ①、此类必须用 public 修饰。
-    ②、根据宿主类的类名来判断是否重复注册。
+    ②、同一个宿主不能重复注册。
     ③、同一个宿主中不能有相同的 tag+requestCode（重复了就只有第一个有效）。
 
 ## 使用方法：
@@ -54,7 +54,7 @@
 2、在需要接收消息的类的初始化方法（通常为构造函数）中调用`register`方法进行注册宿主。当在父类调用`register`方法后，在子类中无需再调用。
 ```java
     LiveDataBus.register(host: Any, owner: LifecycleOwner?)//
-    // 当注册时参数owner不是LifecycleOwner或者View类型，或者为null时，不会自动关联生命周期，必须显示调用下面的方法取消注册；不为null时会自动关联生命周期，不用调用取消注册的方法。
+    // 当注册时参数 owner 不是LifecycleOwner或者View类型，或者为null时，不会自动关联生命周期，必须显示调用下面的方法取消注册；不为null时会自动关联生命周期，不用调用取消注册的方法。
     LiveDataBus.unregister(host: Any)
 ```
 
@@ -75,9 +75,9 @@
     @BusObserver("tag")
     public void test() {
     }
-    
-   // kotlin
-   @BusObserver(["tag"])
+
+    // kotlin
+    @BusObserver(["tag"])
     fun test() {
     }
 ```
@@ -91,8 +91,8 @@
     public void test(T t) {
     }
 
-   // kotlin
-   @BusObserver(["tag"])
+    // kotlin
+    @BusObserver(["tag"])
     fun test(t: T) {
     }
 ```
@@ -106,15 +106,8 @@
     public void test(T t) {
     }
 
-   // kotlin
-   @BusObserver(["tag"], requestCode = "requestCode")
+    // kotlin
+    @BusObserver(["tag"], requestCode = "requestCode")
     fun test(t: T) {
     }
-```
-
-5、混淆。
-```java
-    宿主类不能混淆，需要使用它的类名。比如：
-    -keepnames class com.like.livedatabus.sample.BaseActivity1
-    -keepnames class com.like.livedatabus.sample.MainViewModel
 ```
