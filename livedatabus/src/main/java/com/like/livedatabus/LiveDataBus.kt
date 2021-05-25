@@ -7,13 +7,18 @@ import androidx.lifecycle.findViewTreeLifecycleOwner
 import com.like.livedatabus.LiveDataBus.unregister
 
 object LiveDataBus {
+
     /**
-     * 注册宿主及其所属的生命周期类
+     * 注册宿主
      *
-     * @param host  宿主，即调用此方法的类。
+     * @param host  宿主，包含被[com.like.livedatabus_annotations.BusObserver]注解的方法的类。
      * @param owner 宿主所属的生命周期类。
-     * 如果是LifecycleOwner或者View类型，则不需要传递此参数，会自动获取它的LifecycleOwner。
-     * 如果为 null，则会使用 liveData.observeForever(observer) 进行注册。那么就需要调用 [unregister] 方法取消注册。
+     *
+     * 注意：
+     * 1、如果 host 是 LifecycleOwner 类型，则不需要传递 owner。host 会直接作为 owner。
+     * 2、如果 host 是 View 类型，则不需要传递 owner。会自动获取它的 LifecycleOwner，此时需要注意不能在 View 的 init{} 代码块中进行注册，因为此时还不能获取到它的 LifecycleOwner。
+     * 3、如果 host 是 其它无法获取到 LifecycleOwner 的类型，则需要传递 owner。如果不传 owner的话，则会使用 liveData.observeForever(observer) 进行注册。那么就需要在合适的时机手动调用 [unregister] 方法取消注册。
+     * 4、同一个宿主不能重复注册，根据宿主类的全限定类名来判断是否重复。
      */
     @JvmStatic
     @JvmOverloads
