@@ -31,8 +31,8 @@ import androidx.lifecycle.Observer
  */
 class BusLiveData<T> : MutableLiveData<T>() {
     /**
-     * 主动触发数据更新事件才通知所有Observer，忽略用observe方法注册时引起的改变。
-     * 即当mSetValue为true时。则会在注册的时候就收到之前发送的最新一条消息。当为false时，则不会收到消息。
+     * 主动触发数据更新事件才通知所有 Observer，忽略用 observe 方法注册时引起的改变。
+     * 即当 mSetValue 为 true 时。则会在注册的时候就收到之前发送的最新一条消息。当为 false 时，则不会收到消息。
      */
     internal var mSetValue = false
 

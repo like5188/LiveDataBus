@@ -7,7 +7,7 @@ import javax.lang.model.element.Element
 import javax.lang.model.element.TypeElement
 
 /**
- * RxBus注解处理器。每一个注解处理器类都必须有一个空的构造函数，默认不写就行;
+ * RxBus 注解处理器。每一个注解处理器类都必须有一个空的构造函数，默认不写就行;
  */
 @SupportedSourceVersion(SourceVersion.RELEASE_8)
 @SupportedAnnotationTypes("com.like.livedatabus_annotations.BusObserver")
@@ -17,23 +17,23 @@ class BusProcessor : AbstractProcessor() {
     }
 
     /**
-     * init()方法会被注解处理工具调用，并输入ProcessingEnvironment参数。
-     * ProcessingEnvironment提供很多有用的工具类Elements, Types 和 Filer
+     * init()方法会被注解处理工具调用，并输入 ProcessingEnvironment 参数。
+     * ProcessingEnvironment 提供很多有用的工具类 Elements, Types 和 Filer
      *
      * @param processingEnv 提供给 processor 用来访问工具框架的环境
      */
     @Synchronized
     override fun init(processingEnv: ProcessingEnvironment) {
         super.init(processingEnv)
-        ProcessUtils.typeUtils = processingEnv.typeUtils
-        ProcessUtils.elementUtils = processingEnv.elementUtils
-        ProcessUtils.filer = processingEnv.filer
-        ProcessUtils.messager = processingEnv.messager
+        ProcessUtils.mTypes = processingEnv.typeUtils
+        ProcessUtils.mElements = processingEnv.elementUtils
+        ProcessUtils.mFiler = processingEnv.filer
+        ProcessUtils.mMessager = processingEnv.messager
     }
 
     /**
-     * 这相当于每个处理器的主函数main()，你在这里写你的扫描、评估和处理注解的代码，以及生成Java文件。
-     * 输入参数RoundEnviroment，可以让你查询出包含特定注解的被注解元素
+     * 这相当于每个处理器的主函数 main()，你在这里写你的扫描、评估和处理注解的代码，以及生成Java文件。
+     * 输入参数 RoundEnvironment，可以让你查询出包含特定注解的被注解元素
      *
      * @param annotations 请求处理的注解类型
      * @param roundEnv    有关当前和以前的信息环境
@@ -48,17 +48,17 @@ class BusProcessor : AbstractProcessor() {
         }
         for (element in elements) {
             try {
-                // 验证有效性
-                if (!ProcessUtils.verifyEncloseingClass(element) || !ProcessUtils.verifyMethod(element))
+                // 验证方法及其所在宿主类的有效性
+                if (!ProcessUtils.verifyEnclosingClass(element) || !ProcessUtils.verifyMethod(element))
                     continue
-                // 添加类(包含有被BusObserver注解的方法的类)
+                // 添加宿主类
                 val enclosingElement = element.enclosingElement as TypeElement// 获取直接上级
                 var classCodeGenerator = CODE_BUILDER_MAP[enclosingElement]
                 if (classCodeGenerator == null) {
                     classCodeGenerator = ClassCodeGenerator()
                     CODE_BUILDER_MAP[enclosingElement] = classCodeGenerator
                 }
-                // 添加类下面的方法(被BusObserver注解的方法)
+                // 添加被BusObserver注解的方法
                 classCodeGenerator.addElement(element)
             } catch (e: Exception) {
                 e.printStackTrace()

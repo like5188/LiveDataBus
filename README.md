@@ -13,14 +13,17 @@
 
 2、通过`@BusObserver`注解方法来接收消息。
 
-    ①、此注解中可以设置tag、requestCode、Sticky三个参数。
-    ②、当tag相同时，可以用requestCode来区分。
-    ③、sticky只是针对`@BusObserver`注解的接收消息的方法。发送消息时不区分粘性或者非粘性消息。sticky为true时表示会收到注册之前发送过的最新一条消息。
-    ④、此方法是在主线程中调用的。
-    ⑤、此方法只能使用public void修饰（kotlin中只能使用fun修饰），且参数只能是1个。
-    ⑥、必须要tag、requestCode、参数类型，这三项与发送的消息完全一致，才能接收到消息。
+    ①、此注解中可以设置 tag、requestCode、Sticky 三个参数。
+    ②、当 tag 相同时，可以用 requestCode 来区分。
+    ③、sticky 只是针对`@BusObserver`注解的接收消息的方法。发送消息时不区分粘性或者非粘性消息。sticky 为 true 时表示会收到注册之前发送过的最新一条消息。
+    ④、必须要 tag、requestCode、参数类型，这三项与发送的消息完全一致，才能接收到消息。
+    ⑤、此方法必须用 public 修饰，且不能被 static 修饰，且参数最多只能是1个。
 
-3、同一个宿主只能注册一次（重复注册只有第一次有效）、同一个宿主中不能有相同的tag+requestCode（重复了就只有第一个有效）。
+3、被`@BusObserver`注解的方法所在类称为宿主类。
+
+    ①、此类必须用 public 修饰。
+    ②、根据宿主类的类名来判断是否重复注册。
+    ③、同一个宿主中不能有相同的 tag+requestCode（重复了就只有第一个有效）。
 
 ## 使用方法：
 

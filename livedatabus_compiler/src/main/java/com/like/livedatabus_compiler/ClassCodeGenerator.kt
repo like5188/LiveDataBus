@@ -9,12 +9,12 @@ import javax.lang.model.element.Modifier
 import javax.lang.model.element.TypeElement
 
 /*
-public class MainViewModel_Proxy extends Bridge {
+public class MainViewModel_Proxy<T extends User> extends Bridge {
     @Override
     protected void autoGenerate(@NotNull Object host, @NotNull LifecycleOwner owner) {
-        observe(host, owner, tag, requestCode, isSticky, new Observer<String>() {
+        observe(host, owner, tag, requestCode, isSticky, new Observer<T>() {
             @Override
-            public void onChanged(@Nullable String s) {
+            public void onChanged(@Nullable T s) {
                 // 调用@BusObserver注解的接收数据的方法
                 ((MainViewModel) host).method(s);
             }
@@ -47,7 +47,7 @@ class ClassCodeGenerator {
             .build()
 
         try {
-            javaFile.writeTo(ProcessUtils.filer)
+            javaFile.writeTo(ProcessUtils.mFiler)
         } catch (e: IOException) {
             e.printStackTrace()
         }

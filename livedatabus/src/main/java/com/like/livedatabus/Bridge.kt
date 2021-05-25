@@ -5,62 +5,56 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
 
 /**
- * 连接LiveDataBus和自动生成的代码的桥梁
+ * 连接 LiveDataBus 和 javapoet 自动生成的代码 的桥梁
  */
 open class Bridge {
     /**
      * 注册宿主及其父类
      */
     fun register(host: Any, owner: LifecycleOwner? = null) {
-        try {
-            registerAllHierarchyFromOwner(host, owner, host.javaClass)
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
+        registerAllHierarchyFromOwner(host, owner, host.javaClass)
     }
 
     /**
-     * 初始化宿主及其父类，及调用它们的autoGenerate方法，避免父类中的tag未注册
+     * 查找并实例化由 javapoet 自动生成的代理类。并调用它们的[autoGenerate]方法。
      *
-     * @param clazz 宿主的类
-     * @throws Exception
+     * @param host      宿主类
+     * @param clazz     需要查找是否有对应的代理类（"${clazz.name}_Proxy"）的类
      */
-    @Throws(Exception::class)
     private fun registerAllHierarchyFromOwner(host: Any, owner: LifecycleOwner?, clazz: Class<*>?) {
         clazz ?: return
         Log.v(LiveDataBus.TAG, "registerAllHierarchyFromOwner --> $clazz")
-        // 查找自动生成的代理类，此类继承自Bridge类
-        var proxyClass: Class<*>? = null
         try {
-            proxyClass = Class.forName("${clazz.name}_Proxy")
+            // 查找并实例化由javapoet自动生成的代理类，此类继承自Bridge类。
+            Class.forName("${clazz.name}_Proxy")?.newInstance()?.apply {
+                if (this is Bridge) {
+                    this.autoGenerate(host, owner)
+                }
+            }
         } catch (e: Exception) {
         }
-        // 初始化
-        proxyClass?.newInstance().let {
-            if (it is Bridge) {
-                it.autoGenerate(host, owner)
+        // 继续查找父类。这里过滤开始的字符，及过滤android和java系统自带的类。
+        clazz.superclass?.apply {
+            if (
+                !name.startsWith("android.") &&
+                !name.startsWith("androidx.") &&
+                !name.startsWith("java.") &&
+                !name.startsWith("javax.")
+            ) {
+                registerAllHierarchyFromOwner(host, owner, this)
             }
-        }
-        // 继续查找并初始化父类宿主。这里过滤开始的字符，及过滤android和java系统自带的类。
-        val superClass = clazz.superclass
-        if (superClass != null
-            && !superClass.name.startsWith("android.")
-            && !superClass.name.startsWith("androidx.")
-            && !superClass.name.startsWith("java.")
-            && !superClass.name.startsWith("javax.")
-        ) {
-            registerAllHierarchyFromOwner(host, owner, superClass)
         }
     }
 
     /**
-     * 自动生成代码时重写此方法，方法体是对host中所有注册的tag进行observe()方法的调用
+     * 自动生成的代码中重写此方法。
+     * 方法体是对 host 中所有注册的 tag 进行 observe() 方法的调用
      */
     protected open fun autoGenerate(host: Any, owner: LifecycleOwner?) {
     }
 
     /**
-     * 在代理类中重写autoGenerate方法，然后调用此方法进行注册
+     * 在代理类中重写 autoGenerate 方法，然后调用此方法进行注册
      */
     protected fun <T> observe(
         host: Any?,

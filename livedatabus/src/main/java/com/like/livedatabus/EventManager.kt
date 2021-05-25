@@ -6,9 +6,9 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
 
 object EventManager {
-    private val eventList = mutableListOf<Event<*>>()
+    private val mEventList = mutableListOf<Event<*>>()
 
-    fun isRegistered(host: Any) = eventList.any { it.host == host }
+    fun isRegistered(host: Any) = mEventList.any { it.host == host }
 
     fun <T> observe(host: Any, owner: LifecycleOwner?, tag: String, requestCode: String, isSticky: Boolean, observer: Observer<T>) {
         // LiveData由tag、requestCode组合决定
@@ -19,11 +19,11 @@ object EventManager {
         val busObserverWrapper = BusObserverWrapper(host, tag, requestCode, observer, liveData)
         val event = Event(host, owner, tag, requestCode, busObserverWrapper, liveData)
         // event由host、tag、requestCode组合决定
-        if (eventList.contains(event)) {
+        if (mEventList.contains(event)) {
             Log.e(LiveDataBus.TAG, "已经订阅过事件：$event")
             return
         }
-        eventList.add(event)
+        mEventList.add(event)
         Log.i(LiveDataBus.TAG, "订阅事件成功：$event")
         logHostOwnerEventDetails()
     }
@@ -45,13 +45,13 @@ object EventManager {
     }
 
     fun removeHost(host: Any) {
-        eventList.filter { it.host == host }.forEach {
+        mEventList.filter { it.host == host }.forEach {
             it.removeObserver()// 此方法最终会调用 fun <T> removeObserver(observer: Observer<T>) 方法
         }
     }
 
     fun <T> removeObserver(observer: Observer<T>) {
-        eventList.removeAll { it.observer == observer }
+        mEventList.removeAll { it.observer == observer }
         if (observer is BusObserverWrapper) {
             val logMessage =
                 "Event(host=${observer.host::class.java.simpleName}, tag='${observer.tag}'${if (observer.requestCode.isNotEmpty()) ", requestCode='${observer.requestCode}'" else ""})"
@@ -73,7 +73,7 @@ object EventManager {
      * 获取缓存的LiveData对象。用于发送消息时
      */
     private fun <T> getLiveData(tag: String, requestCode: String): BusLiveData<T>? {
-        val filter = eventList.filter {
+        val filter = mEventList.filter {
             it.tag == tag && it.requestCode == requestCode
         }
         return if (filter.isNotEmpty()) {
@@ -87,13 +87,13 @@ object EventManager {
      * 打印缓存的事件、宿主、宿主所属生命周期类的详情
      */
     private fun logHostOwnerEventDetails() {
-        val events = eventList.toSet()
+        val events = mEventList.toSet()
         Log.d(LiveDataBus.TAG, "事件总数：${events.size}${if (events.isEmpty()) "" else "，包含：$events"}")
 
-        val hosts = eventList.distinctBy { it.host }.map { it.host::class.java.simpleName }
+        val hosts = mEventList.distinctBy { it.host }.map { it.host::class.java.simpleName }
         Log.d(LiveDataBus.TAG, "宿主总数：${hosts.size}${if (hosts.isEmpty()) "" else "，包含：$hosts"}")
 
-        val owners = eventList.distinctBy { it.owner }.map { if (it.owner != null) it.owner::class.java.simpleName else "null" }
+        val owners = mEventList.distinctBy { it.owner }.map { if (it.owner != null) it.owner::class.java.simpleName else "null" }
         Log.d(LiveDataBus.TAG, "宿主所属生命周期类总数：${owners.size}${if (owners.isEmpty()) "" else "，包含：$owners"}")
     }
 
