@@ -66,9 +66,9 @@ object LiveDataBus {
         clazz ?: return
         Log.v(TAG, "registerAllHierarchyFromOwner --> $clazz")
         try {
-            // 查找并实例化由javapoet自动生成的代理类，此类继承自Bridge类。
+            // 查找并实例化由 javapoet 自动生成的宿主代理类，此类继承自 HostProxy 类。
             Class.forName("${clazz.name}_Proxy")?.newInstance()?.apply {
-                if (this is RegisterProxy) {
+                if (this is HostProxy) {
                     this.register(host, owner)
                 }
             }

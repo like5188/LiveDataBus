@@ -66,8 +66,8 @@ class BusProcessor : AbstractProcessor() {
             }
         }
 
-        // 生成代码
-        CODE_BUILDER_MAP.forEach { _, classCodeGenerator ->
+        // 生成宿主类对应的代理类的代码
+        CODE_BUILDER_MAP.forEach { (_, classCodeGenerator) ->
             classCodeGenerator.create()
         }
         return true

@@ -9,7 +9,7 @@ import javax.lang.model.element.Modifier
 import javax.lang.model.element.TypeElement
 
 /*
-public class MainViewModel_Proxy<T extends User> extends RegisterProxy {
+public class MainViewModel_Proxy<T extends User> extends HostProxy {
     @Override
     protected void register(@NotNull Object host, @NotNull LifecycleOwner owner) {
         com.like.livedatabus.EventManager.observe(host, owner, tag, requestCode, isSticky, new Observer<T>() {
@@ -22,12 +22,15 @@ public class MainViewModel_Proxy<T extends User> extends RegisterProxy {
     }
 }
  */
+/**
+ * 生成宿主类(包含[BusObserver]注解方法的类)对应的代理类的代码。
+ */
 class ClassCodeGenerator {
     companion object {
         private const val CLASS_UNIFORM_MARK = "_Proxy"
 
         // 因为java工程中没有下面这些类(Android中的类)，所以只能采用ClassName的方式。
-        private val REGISTER_PROXY = ClassName.get("com.like.livedatabus", "RegisterProxy")
+        private val HOST_PROXY = ClassName.get("com.like.livedatabus", "HostProxy")
         private val OBSERVER = ClassName.get("androidx.lifecycle", "Observer")
         private val LIFECYCLE_OWNER = ClassName.get("androidx.lifecycle", "LifecycleOwner")
         private val OBJECT = ClassName.get("java.lang", "Object")
@@ -58,12 +61,12 @@ class ClassCodeGenerator {
     /**
      * 创建类
      *
-     * public class MainViewModel_Proxy<T extends User> extends RegisterProxy {}
+     * public class MainViewModel_Proxy<T extends User> extends HostProxy {}
      */
     private fun createClass(): TypeSpec {
         val builder = TypeSpec.classBuilder(ClassName.get(mHostClass).simpleName() + CLASS_UNIFORM_MARK)
             .addModifiers(Modifier.PUBLIC, Modifier.FINAL)
-            .superclass(REGISTER_PROXY)
+            .superclass(HOST_PROXY)
             .addMethod(createMethod())
         // 如果宿主类有泛型，也需要添加到代理类中。
         mHostClass?.typeParameters?.forEach {
