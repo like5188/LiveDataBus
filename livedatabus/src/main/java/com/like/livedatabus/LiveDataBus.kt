@@ -73,6 +73,7 @@ object LiveDataBus {
                 }
             }
         } catch (e: Exception) {
+            Log.v(TAG, "registerAllHierarchyFromOwner --> $clazz 不是宿主类，无需注册！")
         }
         // 继续查找父类。这里过滤开始的字符，及过滤android和java系统自带的类。
         clazz.superclass?.apply {
