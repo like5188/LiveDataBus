@@ -10,7 +10,11 @@ object EventManager {
 
     fun isRegistered(host: Any) = mEventList.any { it.host == host }
 
+    @JvmStatic
     fun <T> observe(host: Any, owner: LifecycleOwner?, tag: String, requestCode: String, isSticky: Boolean, observer: Observer<T>) {
+        if (tag.isEmpty()) {
+            return
+        }
         // LiveData由tag、requestCode组合决定
         val liveData = getLiveDataIfNullCreate<T>(tag, requestCode)
         // 设置mSetValue标记为isSticky。即当isSticky为true时。则会在注册的时候就收到之前发送的最新一条消息。当为false时，则不会收到消息。

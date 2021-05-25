@@ -21,5 +21,5 @@
 #-renamesourcefileattribute SourceFile
 
 #livedatabus 注意：调用注册方法的宿主类不能混淆
--keep class * extends com.like.livedatabus.Bridge
+-keep class * extends com.like.livedatabus.RegisterProxy
 -keep class com.like.livedatabus_annotations.**{*;}

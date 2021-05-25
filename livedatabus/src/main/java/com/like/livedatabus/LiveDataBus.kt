@@ -68,8 +68,8 @@ object LiveDataBus {
         try {
             // 查找并实例化由javapoet自动生成的代理类，此类继承自Bridge类。
             Class.forName("${clazz.name}_Proxy")?.newInstance()?.apply {
-                if (this is Bridge) {
-                    autoGenerate(host, owner)
+                if (this is RegisterProxy) {
+                    this.register(host, owner)
                 }
             }
         } catch (e: Exception) {

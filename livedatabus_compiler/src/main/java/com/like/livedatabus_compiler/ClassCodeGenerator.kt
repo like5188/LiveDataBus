@@ -9,10 +9,10 @@ import javax.lang.model.element.Modifier
 import javax.lang.model.element.TypeElement
 
 /*
-public class MainViewModel_Proxy<T extends User> extends Bridge {
+public class MainViewModel_Proxy<T extends User> extends RegisterProxy {
     @Override
-    protected void autoGenerate(@NotNull Object host, @NotNull LifecycleOwner owner) {
-        observe(host, owner, tag, requestCode, isSticky, new Observer<T>() {
+    protected void register(@NotNull Object host, @NotNull LifecycleOwner owner) {
+        com.like.livedatabus.EventManager.observe(host, owner, tag, requestCode, isSticky, new Observer<T>() {
             @Override
             public void onChanged(@Nullable T s) {
                 // 调用@BusObserver注解的接收数据的方法
@@ -27,11 +27,12 @@ class ClassCodeGenerator {
         private const val CLASS_UNIFORM_MARK = "_Proxy"
 
         // 因为java工程中没有下面这些类(Android中的类)，所以只能采用ClassName的方式。
-        private val BRIDGE = ClassName.get("com.like.livedatabus", "Bridge")
+        private val REGISTER_PROXY = ClassName.get("com.like.livedatabus", "RegisterProxy")
         private val OBSERVER = ClassName.get("androidx.lifecycle", "Observer")
         private val LIFECYCLE_OWNER = ClassName.get("androidx.lifecycle", "LifecycleOwner")
         private val OBJECT = ClassName.get("java.lang", "Object")
         private val NO_OBSERVER_PARAMS = ClassName.get("com.like.livedatabus", "NoObserverParams")
+        private val EVENT_MANAGER = ClassName.get("com.like.livedatabus", "EventManager")
     }
 
     private var mHostClass: TypeElement? = null// 宿主类
@@ -57,12 +58,12 @@ class ClassCodeGenerator {
     /**
      * 创建类
      *
-     * public class MainViewModel_Proxy extends Bridge {}
+     * public class MainViewModel_Proxy<T extends User> extends RegisterProxy {}
      */
     private fun createClass(): TypeSpec {
         val builder = TypeSpec.classBuilder(ClassName.get(mHostClass).simpleName() + CLASS_UNIFORM_MARK)
             .addModifiers(Modifier.PUBLIC, Modifier.FINAL)
-            .superclass(BRIDGE)
+            .superclass(REGISTER_PROXY)
             .addMethod(createMethod())
         // 如果宿主类有泛型，也需要添加到代理类中。
         mHostClass?.typeParameters?.forEach {
@@ -72,13 +73,13 @@ class ClassCodeGenerator {
     }
 
     /**
-     * 创建autoGenerate方法
+     * 创建 register 方法
      *
      * @Override
-     * protected void autoGenerate(@NotNull Object host, @NotNull LifecycleOwner owner) {}
+     * protected void register(@NotNull Object host, @NotNull LifecycleOwner owner) {}
      */
     private fun createMethod(): MethodSpec {
-        val builder = MethodSpec.methodBuilder("autoGenerate")
+        val builder = MethodSpec.methodBuilder("register")
             .addModifiers(Modifier.PUBLIC)
             .addParameter(OBJECT, "host", Modifier.FINAL)
             .addParameter(LIFECYCLE_OWNER, "owner", Modifier.FINAL)
@@ -90,9 +91,9 @@ class ClassCodeGenerator {
     }
 
     /**
-     * 创建autoGenerate方法中调用的方法
+     * 创建 register 方法中调用的方法
      *
-     * observe(host, owner, tag, requestCode, isSticky, observer)
+     * com.like.livedatabus.EventManager.observe(host, owner, tag, requestCode, isSticky, observer)
      */
     private fun createMethodCodeBlock(methodInfo: MethodInfo): CodeBlock {
         val builder = CodeBlock.builder()
@@ -102,7 +103,8 @@ class ClassCodeGenerator {
 
             val codeBlockBuilder = CodeBlock.builder()
             codeBlockBuilder.addStatement(
-                "observe(host\n,owner\n,\$S\n,\$S\n,\$L\n,\$L)",
+                "\$L.observe(host\n,owner\n,\$S\n,\$S\n,\$L\n,\$L)",
+                EVENT_MANAGER,
                 it,
                 requestCode,
                 isSticky,
@@ -116,9 +118,9 @@ class ClassCodeGenerator {
     /*
      * 创建observe方法的第四个参数observer，是一个匿名内部类。
      *
-        new Observer<String>() {
+        new Observer<T>() {
             @Override
-            public void onChanged(@Nullable String s) {
+            public void onChanged(@Nullable T s) {
                 // 调用@BusObserver注解的接收数据的方法
                 ((MainViewModel) host).method(s);
             }
@@ -175,10 +177,11 @@ class ClassCodeGenerator {
         val busObserverAnnotationClass = BusObserver::class.java
         val methodInfo = MethodInfo()
         methodInfo.tag = element.getAnnotation(busObserverAnnotationClass).value
+        if (methodInfo.tag.isNullOrEmpty()) return
+
         methodInfo.requestCode = element.getAnnotation(busObserverAnnotationClass).requestCode
 
         // 判断是否有重复的tag + requestCode
-        if (methodInfo.tag == null) return
         val isRepeat = mMethodInfoList.any {
             it.tag?.intersect(methodInfo.tag!!.toList())?.isNotEmpty() ?: false &&
                     it.requestCode == methodInfo.requestCode
@@ -186,6 +189,8 @@ class ClassCodeGenerator {
         if (isRepeat) return
 
         methodInfo.methodName = element.simpleName.toString()
+        if (methodInfo.methodName.isEmpty()) return
+
         methodInfo.isSticky = element.getAnnotation(busObserverAnnotationClass).isSticky
 
         val executableElement = element as ExecutableElement
