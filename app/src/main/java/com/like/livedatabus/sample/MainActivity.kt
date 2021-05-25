@@ -18,7 +18,10 @@ class MainActivity : BaseActivity1() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         mBinding
-        MainViewModel(this)
+        val mainViewModel1 = MainViewModel()
+        LiveDataBus.register(mainViewModel1, this)
+        val mainViewModel2 = MainViewModel()
+        LiveDataBus.register(mainViewModel2, this)
         Log.w("LiveDataBus", "MainActivity onCreate")
     }
 

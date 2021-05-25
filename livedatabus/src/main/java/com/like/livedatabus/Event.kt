@@ -5,7 +5,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 
 class Event<T>(
-    val host: Any,// 宿主
+    val hostQualifiedName: String,// 宿主的全限定类名
     val owner: LifecycleOwner?,// 宿主所属的生命周期类
     val tag: String,// 标签
     val requestCode: String,// 请求码。当标签相同时，可以使用请求码区分
@@ -31,7 +31,7 @@ class Event<T>(
 
         other as Event<*>
 
-        if (host != other.host) return false
+        if (hostQualifiedName != other.hostQualifiedName) return false
         if (tag != other.tag) return false
         if (requestCode != other.requestCode) return false
 
@@ -39,14 +39,14 @@ class Event<T>(
     }
 
     override fun hashCode(): Int {
-        var result = host.hashCode()
+        var result = hostQualifiedName.hashCode()
         result = 31 * result + tag.hashCode()
         result = 31 * result + requestCode.hashCode()
         return result
     }
 
     override fun toString(): String {
-        return "Event(host=${host::class.java.simpleName}, tag='$tag'${if (requestCode.isNotEmpty()) ", requestCode='$requestCode'" else ""})"
+        return "Event(hostQualifiedName=$hostQualifiedName, tag='$tag'${if (requestCode.isNotEmpty()) ", requestCode='$requestCode'" else ""})"
     }
 
 }
