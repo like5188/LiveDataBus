@@ -20,11 +20,11 @@ object EventManager {
         val event = Event(host, owner, tag, requestCode, busObserverWrapper, liveData)
         // event由host、tag、requestCode组合决定
         if (mEventList.contains(event)) {
-            Log.e(LiveDataBus.TAG, "已经订阅过事件：$event")
+            Log.e(TAG, "已经订阅过事件：$event")
             return
         }
         mEventList.add(event)
-        Log.i(LiveDataBus.TAG, "订阅事件成功：$event")
+        Log.i(TAG, "订阅事件成功：$event")
         logHostOwnerEventDetails()
     }
 
@@ -33,14 +33,14 @@ object EventManager {
         val liveData = getLiveData<T>(tag, requestCode)
         if (liveData != null) {
             if (Looper.getMainLooper() == Looper.myLooper()) {
-                Log.v(LiveDataBus.TAG, "在主线程发送消息 --> tag=$tag$requestCodeLogMessage，内容=$t")
+                Log.v(TAG, "在主线程发送消息 --> tag=$tag$requestCodeLogMessage，内容=$t")
                 liveData.setValue(t)
             } else {
-                Log.v(LiveDataBus.TAG, "在非主线程发送消息 --> tag=$tag$requestCodeLogMessage，内容=$t")
+                Log.v(TAG, "在非主线程发送消息 --> tag=$tag$requestCodeLogMessage，内容=$t")
                 liveData.postValue(t)
             }
         } else {
-            Log.e(LiveDataBus.TAG, "发送消息失败，没有订阅事件： --> tag=$tag$requestCodeLogMessage")
+            Log.e(TAG, "发送消息失败，没有订阅事件： --> tag=$tag$requestCodeLogMessage")
         }
     }
 
@@ -55,9 +55,9 @@ object EventManager {
         if (observer is BusObserverWrapper) {
             val logMessage =
                 "Event(host=${observer.host::class.java.simpleName}, tag='${observer.tag}'${if (observer.requestCode.isNotEmpty()) ", requestCode='${observer.requestCode}'" else ""})"
-            Log.i(LiveDataBus.TAG, "取消事件：$logMessage")
+            Log.i(TAG, "取消事件：$logMessage")
         } else {
-            Log.i(LiveDataBus.TAG, "取消事件：$observer")
+            Log.i(TAG, "取消事件：$observer")
         }
         logHostOwnerEventDetails()
     }
@@ -88,13 +88,13 @@ object EventManager {
      */
     private fun logHostOwnerEventDetails() {
         val events = mEventList.toSet()
-        Log.d(LiveDataBus.TAG, "事件总数：${events.size}${if (events.isEmpty()) "" else "，包含：$events"}")
+        Log.d(TAG, "事件总数：${events.size}${if (events.isEmpty()) "" else "，包含：$events"}")
 
         val hosts = mEventList.distinctBy { it.host }.map { it.host::class.java.simpleName }
-        Log.d(LiveDataBus.TAG, "宿主总数：${hosts.size}${if (hosts.isEmpty()) "" else "，包含：$hosts"}")
+        Log.d(TAG, "宿主总数：${hosts.size}${if (hosts.isEmpty()) "" else "，包含：$hosts"}")
 
         val owners = mEventList.distinctBy { it.owner }.map { if (it.owner != null) it.owner::class.java.simpleName else "null" }
-        Log.d(LiveDataBus.TAG, "宿主所属生命周期类总数：${owners.size}${if (owners.isEmpty()) "" else "，包含：$owners"}")
+        Log.d(TAG, "宿主所属生命周期类总数：${owners.size}${if (owners.isEmpty()) "" else "，包含：$owners"}")
     }
 
 }

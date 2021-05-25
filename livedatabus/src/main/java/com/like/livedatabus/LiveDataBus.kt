@@ -7,8 +7,6 @@ import androidx.lifecycle.findViewTreeLifecycleOwner
 import com.like.livedatabus.LiveDataBus.unregister
 
 object LiveDataBus {
-    const val TAG = "LiveDataBus"
-
     /**
      * 注册宿主及其所属的生命周期类
      *

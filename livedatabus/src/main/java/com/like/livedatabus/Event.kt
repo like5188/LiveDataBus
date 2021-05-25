@@ -5,12 +5,12 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 
 class Event<T>(
-        val host: Any,// 宿主
-        val owner: LifecycleOwner?,// 宿主所属的生命周期类
-        val tag: String,// 标签
-        val requestCode: String,// 请求码。当标签相同时，可以使用请求码区分
-        val observer: Observer<T>,// 数据改变监听器
-        val liveData: LiveData<T>
+    val host: Any,// 宿主
+    val owner: LifecycleOwner?,// 宿主所属的生命周期类
+    val tag: String,// 标签
+    val requestCode: String,// 请求码。当标签相同时，可以使用请求码区分
+    val observer: Observer<T>,// 数据改变监听器
+    val liveData: LiveData<T>
 ) {
 
     init {
