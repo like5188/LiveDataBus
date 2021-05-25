@@ -29,7 +29,7 @@ open class Bridge {
     private fun registerAllHierarchyFromOwner(host: Any, owner: LifecycleOwner?, clazz: Class<*>?) {
         clazz ?: return
         Log.v(LiveDataBus.TAG, "registerAllHierarchyFromOwner --> $clazz")
-        // 查找自动生成的代理类，此类继承Bridge类
+        // 查找自动生成的代理类，此类继承自Bridge类
         var proxyClass: Class<*>? = null
         try {
             proxyClass = Class.forName("${clazz.name}_Proxy")
