@@ -10,7 +10,7 @@ import com.like.livedatabus.sample.databinding.ActivityMainBinding
 import com.like.livedatabus_annotations.BusObserver
 import kotlin.concurrent.thread
 
-class MainActivity : BaseActivity() {
+class MainActivity : BaseActivity1() {
     private val mBinding by lazy {
         DataBindingUtil.setContentView<ActivityMainBinding>(this, R.layout.activity_main)
     }
@@ -54,6 +54,10 @@ class MainActivity : BaseActivity() {
 
     fun changeData4(view: View) {
         LiveDataBus.post("like4", 4)
+    }
+
+    fun changeData5(view: View) {
+        LiveDataBus.post("like5", 4)
     }
 
     fun startActivity2(view: View) {
