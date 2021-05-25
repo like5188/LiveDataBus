@@ -21,6 +21,7 @@ object EventManager {
         liveData.mSetValue = isSticky
 
         val busObserverWrapper = BusObserverWrapper(host, tag, requestCode, observer, liveData)
+        // 创建 Event 对象，会自动订阅（liveData.observe 或者 liveData.observeForever）。
         val event = Event(host, owner, tag, requestCode, busObserverWrapper, liveData)
         // event由host、tag、requestCode组合决定
         if (mEventList.contains(event)) {
