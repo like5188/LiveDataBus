@@ -20,9 +20,9 @@ object EventManager {
         // 设置mSetValue标记为isSticky。即当isSticky为true时。则会在注册的时候就收到之前发送的最新一条消息。当为false时，则不会收到消息。
         liveData.mSetValue = isSticky
 
-        val busObserverWrapper = BusObserverWrapper(host.javaClass.name, tag, requestCode, observer, liveData)
+        val busObserverWrapper = BusObserverWrapper(host, tag, requestCode, observer, liveData)
         // 创建 Event 对象，会自动订阅（liveData.observe 或者 liveData.observeForever）。
-        val event = Event(host.javaClass.name, owner, tag, requestCode, busObserverWrapper, liveData)
+        val event = Event(host, owner, tag, requestCode, busObserverWrapper, liveData)
         // event由host、tag、requestCode组合决定
         if (mEventList.contains(event)) {
             Log.e(TAG, "已经订阅过事件：$event")

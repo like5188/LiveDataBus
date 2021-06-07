@@ -31,10 +31,10 @@ object LiveDataBus {
         }
     ) {
         if (EventManager.isRegistered(host)) {
-            Log.e(TAG, "已经注册过宿主：${host::class.java.name}")
+            Log.e(TAG, "已经注册过宿主：$host")
             return
         }
-        Log.i(TAG, "注册宿主：${host::class.java.name}")
+        Log.i(TAG, "注册宿主：$host")
         registerAllHierarchyFromOwner(host, owner, host.javaClass)
     }
 
@@ -80,7 +80,7 @@ object LiveDataBus {
         } catch (e: Exception) {
             Log.e(TAG, "registerAllHierarchyFromOwner --> $clazz 不是宿主类，无需注册！")
         }
-        // 继续查找父类。以便能调用父类中被BusObserver注解的方法。这里过滤开始的字符，及过滤android和java系统自带的类。
+        // 继续查找父类。以便能调用父类中被 BusObserver 注解的方法。这里过滤开始的字符，及过滤 android 和 java 系统自带的类。
         clazz.superclass?.apply {
             if (
                 !name.startsWith("android.") &&
