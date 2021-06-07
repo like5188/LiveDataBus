@@ -67,10 +67,10 @@
 
 4、接收消息与发送消息一一对应。
 ```java
-    发送消息：
+    发送消息:
     LiveDataBus.post(tag: String)
     
-    接收消息：
+    接收消息:
     // java
     @BusObserver("tag")
     public void test() {
@@ -82,10 +82,10 @@
     }
 ```
 ```java
-    发送消息：
+    发送消息:
     LiveDataBus.post(tag: String, t: T)
 
-    接收消息：
+    接收消息:
     // java
     @BusObserver("tag")
     public void test(T t) {
@@ -97,10 +97,10 @@
     }
 ```
 ```java
-    发送消息：
+    发送消息:
     LiveDataBus.post(tag: String, requestCode: String, t: T)
     
-    接收消息：
+    接收消息:
     // java
     @BusObserver(value = "tag", requestCode = "requestCode")
     public void test(T t) {
