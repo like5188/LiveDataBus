@@ -8,7 +8,7 @@ import androidx.lifecycle.Observer
 object EventManager {
     private val mEventList = mutableListOf<Event<*>>()
 
-    fun isRegistered(host: Any) = mEventList.any { it.hostQualifiedName == host.javaClass.name }
+    fun isRegistered(host: Any) = mEventList.any { it.host == host }
 
     @JvmStatic
     fun <T> observe(host: Any, owner: LifecycleOwner?, tag: String, requestCode: String, isSticky: Boolean, observer: Observer<T>) {
@@ -50,7 +50,7 @@ object EventManager {
     }
 
     fun removeHost(host: Any) {
-        mEventList.filter { it.hostQualifiedName == host.javaClass.name }.forEach {
+        mEventList.filter { it.host == host }.forEach {
             it.removeObserver()// 此方法最终会调用 fun <T> removeObserver(observer: Observer<T>) 方法
         }
     }
@@ -59,7 +59,7 @@ object EventManager {
         mEventList.removeAll { it.observer == observer }
         if (observer is BusObserverWrapper) {
             val logMessage =
-                "Event(hostQualifiedName=${observer.hostQualifiedName}, tag='${observer.tag}'${if (observer.requestCode.isNotEmpty()) ", requestCode='${observer.requestCode}'" else ""})"
+                "Event(host=${observer.host}, tag='${observer.tag}'${if (observer.requestCode.isNotEmpty()) ", requestCode='${observer.requestCode}'" else ""})"
             Log.i(TAG, "取消事件：$logMessage")
         } else {
             Log.i(TAG, "取消事件：$observer")
@@ -95,7 +95,7 @@ object EventManager {
         val events = mEventList.toSet()
         Log.d(TAG, "事件总数：${events.size}${if (events.isEmpty()) "" else "，包含：$events"}")
 
-        val hosts = mEventList.distinctBy { it.hostQualifiedName }.map { it.hostQualifiedName }
+        val hosts = mEventList.distinctBy { it.host }.map { it.host }
         Log.d(TAG, "宿主总数：${hosts.size}${if (hosts.isEmpty()) "" else "，包含：$hosts"}")
 
         val owners = mEventList.distinctBy { it.owner }.map { if (it.owner != null) it.owner::class.java.name else "null" }
