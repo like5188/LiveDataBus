@@ -1,3 +1,10 @@
-apply plugin: 'java-library'
-apply plugin: 'kotlin'
-apply plugin: 'com.github.dcendents.android-maven'// 上传jitPack
+plugins {
+    id 'java-library'
+    id 'kotlin'
+    id 'com.github.dcendents.android-maven'// 上传jitPack
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+}
